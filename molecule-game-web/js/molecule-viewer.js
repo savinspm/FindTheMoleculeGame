@@ -9,6 +9,7 @@ class PseudoRandom {
      */
     constructor(seed) {
         this.seed = seed || 1;
+        this.originalSeed = this.seed;
     }
     
     /**
@@ -16,8 +17,37 @@ class PseudoRandom {
      * @returns {number} - Número pseudoaleatorio
      */
     random() {
-        const x = Math.sin(this.seed++) * 10000;
-        return x - Math.floor(x);
+        // Algoritmo Linear Congruential Generator (LCG) mejorado
+        // Usando constantes que proporcionan mejor distribución
+        this.seed = (this.seed * 1664525 + 1013904223) % 4294967296;
+        return this.seed / 4294967296;
+    }
+    
+    /**
+     * Reinicia el generador con la semilla original
+     */
+    reset() {
+        this.seed = this.originalSeed;
+    }
+    
+    /**
+     * Genera un número entero aleatorio en un rango
+     * @param {number} min - Valor mínimo (inclusive)
+     * @param {number} max - Valor máximo (exclusive)
+     * @returns {number} - Número entero aleatorio
+     */
+    randomInt(min, max) {
+        return Math.floor(this.random() * (max - min)) + min;
+    }
+    
+    /**
+     * Genera un número decimal aleatorio en un rango
+     * @param {number} min - Valor mínimo
+     * @param {number} max - Valor máximo
+     * @returns {number} - Número decimal aleatorio
+     */
+    randomFloat(min, max) {
+        return this.random() * (max - min) + min;
     }
 }
 
@@ -162,61 +192,30 @@ class MoleculeViewer {
                     console.log(`Molécula compleja detectada (${atomCount} átomos). Aplicando ajustes adicionales.`);
                 }
                 
-                // Aplicar rotación verdaderamente aleatoria usando un eje y ángulo aleatorios
-                // Esto garantiza que cada molécula tenga una pose única
+                // SISTEMA DE ROTACIÓN ALEATORIA
+                // ===============================
+                // Aplica rotaciones aleatorias a cada molécula para que todas tengan orientaciones diferentes
+                // Cada molécula tendrá la misma rotación inicial (determinística) pero será diferente de las otras
                 
-                // Generar rotación basada en el containerId para diferenciar las moléculas target de las opciones
-                const isTarget = !containerId.includes('option');
+                // Crear una semilla única basada en la ruta de la molécula y el contenedor
+                const moleculeHash = this.simpleHash(moleculePath);
+                const containerHash = this.simpleHash(containerId);
+                const combinedSeed = moleculeHash + containerHash * 777; // Factor primo para mejor distribución
                 
-                // Si es la molécula target, usamos una rotación estándar para mejor visualización
-                if (isTarget) {
-                    console.log("Molécula target: rotación estándar para mejor visualización");
-                    
-                    // Rotación básica para una buena vista general
-                    viewer.rotate(45, 'x');
-                    viewer.rotate(45, 'y');
-                    viewer.rotate(15, 'z');
-                } 
-                // Si es una opción, usamos una rotación completamente aleatoria
-                else {
-                    console.log("Molécula opción: rotación aleatoria");
-                    
-                    // Usar el ID del contenedor como semilla para una rotación pseudo-aleatoria
-                    // pero determinista para cada opción, esto garantiza que cada molécula
-                    // tenga siempre una rotación diferente pero consistente
-                    const optionNumber = parseInt(containerId.replace('option-', ''));
-                    const seedBase = this.simpleHash(moleculePath);
-                    const seed = seedBase + optionNumber * 1000; // Usar número de opción como parte de la semilla
-                    
-                    // Crear un generador pseudo-aleatorio determinista basado en la semilla
-                    const randomGen = new PseudoRandom(seed);
-                    
-                    // Crear un vector unitario aleatorio en 3D (eje de rotación)
-                    const phi = randomGen.random() * 2 * Math.PI;
-                    const costheta = randomGen.random() * 2 - 1;
-                    const theta = Math.acos(costheta);
-                    
-                    const x = Math.sin(theta) * Math.cos(phi);
-                    const y = Math.sin(theta) * Math.sin(phi);
-                    const z = Math.cos(theta);
-                    
-                    // Ángulo de rotación aleatorio (30-330 grados para garantizar una diferencia significativa)
-                    const angle = 30 + randomGen.random() * 300;
-                    
-                    console.log(`Molécula ${containerId}: rotación con eje (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)}) y ángulo ${angle.toFixed(2)}°`);
-                    
-                    // Aplicar rotación aleatoria al modelo utilizando un eje arbitrario
-                    this.rotateAroundArbitraryAxis(viewer, model, x, y, z, angle);
-                    
-                    // Añadir rotaciones adicionales para variabilidad
-                    const randomRotationX = Math.random() * 180;
-                    const randomRotationY = Math.random() * 180;
-                    const randomRotationZ = Math.random() * 180;
-                    
-                    viewer.rotate(randomRotationX, 'x');
-                    viewer.rotate(randomRotationY, 'y');
-                    viewer.rotate(randomRotationZ, 'z');
-                }
+                // Crear generador pseudo-aleatorio determinista
+                const randomGen = new PseudoRandom(combinedSeed);
+                
+                // Generar rotaciones aleatorias para cada eje (0-360 grados)
+                const rotationX = randomGen.randomFloat(0, 360);
+                const rotationY = randomGen.randomFloat(0, 360); 
+                const rotationZ = randomGen.randomFloat(0, 360);
+                
+                // Aplicar las rotaciones antes de renderizar (similar al ejemplo proporcionado)
+                viewer.rotate(rotationX, 'x');
+                viewer.rotate(rotationY, 'y'); 
+                viewer.rotate(rotationZ, 'z');
+                
+                console.log(`Rotación aplicada a ${containerId}: X=${rotationX.toFixed(1)}°, Y=${rotationY.toFixed(1)}°, Z=${rotationZ.toFixed(1)}°`);
                 
                 // Configurar estilos de visualización mejorados para mejor visualización de átomos y enlaces
                 
@@ -538,92 +537,9 @@ USER_CHARGES
         } catch (error) {
             console.error("Error al detectar enlaces múltiples:", error);
         }
-    }
-    
-    /**
-     * Rota la molécula alrededor de un eje arbitrario definido por el vector (x,y,z)
-     * @param {Object} viewer - El objeto visor 3Dmol
-     * @param {Object} model - El modelo de la molécula
-     * @param {number} x - Componente X del vector de rotación
-     * @param {number} y - Componente Y del vector de rotación
-     * @param {number} z - Componente Z del vector de rotación
-     * @param {number} angle - Ángulo de rotación en grados
-     */
-    rotateAroundArbitraryAxis(viewer, model, x, y, z, angle) {
-        try {
-            // Normalizar el vector para asegurar que sea un vector unitario
-            const length = Math.sqrt(x*x + y*y + z*z);
-            if (length === 0) return; // Evitar división por cero
-            
-            x /= length;
-            y /= length;
-            z /= length;
-            
-            // Calcular el centro geométrico de la molécula para rotar alrededor de él
-            const atoms = model.selectedAtoms({});
-            if (atoms.length === 0) return;
-            
-            let cx = 0, cy = 0, cz = 0;
-            for (let i = 0; i < atoms.length; i++) {
-                cx += atoms[i].x;
-                cy += atoms[i].y;
-                cz += atoms[i].z;
-            }
-            cx /= atoms.length;
-            cy /= atoms.length;
-            cz /= atoms.length;
-            
-            // Primero trasladamos el modelo al origen
-            model.translate(-cx, -cy, -cz);
-            
-            // Convertir ángulo a radianes
-            const angleRad = (angle * Math.PI) / 180;
-            const c = Math.cos(angleRad);
-            const s = Math.sin(angleRad);
-            const t = 1 - c;
-            
-            // Matriz de rotación alrededor de un eje arbitrario
-            // https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
-            const r11 = t*x*x + c;
-            const r12 = t*x*y - s*z;
-            const r13 = t*x*z + s*y;
-            
-            const r21 = t*x*y + s*z;
-            const r22 = t*y*y + c;
-            const r23 = t*y*z - s*x;
-            
-            const r31 = t*x*z - s*y;
-            const r32 = t*y*z + s*x;
-            const r33 = t*z*z + c;
-            
-            // Aplicar rotación a cada átomo
-            for (let i = 0; i < atoms.length; i++) {
-                const atom = atoms[i];
-                
-                // Coordenadas actuales
-                const ax = atom.x;
-                const ay = atom.y;
-                const az = atom.z;
-                
-                // Aplicar rotación
-                atom.x = r11*ax + r12*ay + r13*az;
-                atom.y = r21*ax + r22*ay + r23*az;
-                atom.z = r31*ax + r32*ay + r33*az;
-            }
-            
-            // Devolver el modelo a su posición original
-            model.translate(cx, cy, cz);
-            
-            // Actualizar el modelo
-            viewer.render();
-            
-            console.log(`Rotación aplicada alrededor del eje (${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)}) con ángulo ${angle.toFixed(1)}°`);
-            
-        } catch (error) {
-            console.error("Error al aplicar rotación arbitraria:", error);
-        }
-    }
+}
 }
 
 // Exportar la clase para su uso en otros archivos
 window.MoleculeViewer = MoleculeViewer;
+window.PseudoRandom = PseudoRandom;

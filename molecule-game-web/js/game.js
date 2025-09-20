@@ -335,51 +335,37 @@ class MoleculeGame {
                         }
                     });
                     
-                    // Aplicar rotaciones iniciales fijas mediante el API de 3Dmol
+                    // Aplicar rotaciones aleatorias iniciales usando el mismo sistema que MoleculeViewer
                     if (typeof $3Dmol !== 'undefined' && typeof $3Dmol.viewers !== 'undefined') {
-                        // Generar una semilla base para que las rotaciones sean predecibles pero diferentes para cada nivel
-                        const baseSeed = Date.now();
                         
-                        // Función para generar un número pseudoaleatorio basado en una semilla
-                        const seededRandom = (seed) => {
-                            const x = Math.sin(seed) * 10000;
-                            return x - Math.floor(x);
-                        };
-                        
-                        // Identificar el visualizador de la molécula objetivo y la opción correcta
-                        const viewerIds = Object.keys($3Dmol.viewers);
-                        const targetViewerId = viewerIds.find(id => id.includes('target-molecule'));
-                        const correctOptionId = viewerIds.find(id => id.includes(`option-${this.correctOption}`));
-                        
-                        // Aplicar rotaciones iniciales diferentes a cada visualizador
+                        // Aplicar rotaciones diferentes a cada visualizador
                         Object.keys($3Dmol.viewers).forEach((viewerId, index) => {
                             const viewer = $3Dmol.viewers[viewerId];
                             if (viewer) {
-                                // Generar un seed base diferente para cada visualizador
-                                let seed = baseSeed + (index * 1000);
+                                // Crear una semilla única basada en el viewerId y la molécula
+                                const viewerIdHash = this.simpleHash(viewerId);
+                                const moleculePathHash = this.simpleHash(this.options[index] || this.currentMolecule || 'default');
+                                const combinedSeed = viewerIdHash + moleculePathHash * 777 + index * 1234;
                                 
-                                // Asegurar que la molécula objetivo y la opción correcta tengan rotaciones diferentes
-                                // Si este es el visualizador de la opción correcta, modificar la semilla significativamente
-                                if (viewerId === correctOptionId) {
-                                    seed = baseSeed + 50000 + (index * 1000);
-                                }
+                                // Crear generador pseudo-aleatorio determinista (igual que en MoleculeViewer)
+                                const randomGen = new PseudoRandom(combinedSeed);
                                 
-                                const rotX = seededRandom(seed) * 360;
-                                const rotY = seededRandom(seed + 1) * 360;
-                                const rotZ = seededRandom(seed + 2) * 360;
+                                // Generar rotaciones aleatorias para cada eje (0-360 grados)
+                                const rotationX = randomGen.randomFloat(0, 360);
+                                const rotationY = randomGen.randomFloat(0, 360); 
+                                const rotationZ = randomGen.randomFloat(0, 360);
                                 
-                                // Crear una matriz de rotación completa en lugar de aplicar rotaciones secuenciales
-                                // Esto hace que la rotación sea inmediata
-                                viewer.setView(new $3Dmol.View(viewer), true);
-                                viewer.rotate(rotX, 'x', false);
-                                viewer.rotate(rotY, 'y', false);
-                                viewer.rotate(rotZ, 'z', false);
+                                // Aplicar las rotaciones (similar al ejemplo proporcionado)
+                                viewer.rotate(rotationX, 'x');
+                                viewer.rotate(rotationY, 'y'); 
+                                viewer.rotate(rotationZ, 'z');
+                                
                                 viewer.render();
                                 
-                                // Asegurarnos de que no hay animación de rotación continua
+                                // Asegurarse de que no hay animación de rotación continua
                                 viewer.spin(false);
                                 
-                                console.log(`Rotación inicial fija aplicada al visor ${viewerId}: X=${rotX.toFixed(2)}°, Y=${rotY.toFixed(2)}°, Z=${rotZ.toFixed(2)}°`);
+                                console.log(`Rotación aplicada a ${viewerId}: X=${rotationX.toFixed(1)}°, Y=${rotationY.toFixed(1)}°, Z=${rotationZ.toFixed(1)}°`);
                             }
                         });
                     }
@@ -648,6 +634,92 @@ class MoleculeGame {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    
+    /**
+     * Genera un hash simple a partir de un string
+     * @param {string} str - String a convertir en hash
+     * @returns {number} - Hash numérico
+     */
+    simpleHash(str) {
+        let hash = 0;
+        if (str.length === 0) return hash;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convertir a entero de 32 bits
+        }
+        return Math.abs(hash);
+    }
+    
+    /**
+     * Aplica una rotación alrededor de un eje arbitrario a un modelo 3D
+     * @param {Object} model - El modelo 3D de 3Dmol.js
+     * @param {number} axisX - Componente X del eje de rotación (normalizado)
+     * @param {number} axisY - Componente Y del eje de rotación (normalizado) 
+     * @param {number} axisZ - Componente Z del eje de rotación (normalizado)
+     * @param {number} angle - Ángulo de rotación en grados
+     */
+    applyArbitraryAxisRotation(model, axisX, axisY, axisZ, angle) {
+        try {
+            // Normalizar el vector del eje
+            const length = Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
+            if (length === 0) return;
+            
+            axisX /= length;
+            axisY /= length;
+            axisZ /= length;
+            
+            // Convertir ángulo a radianes
+            const angleRad = (angle * Math.PI) / 180;
+            const c = Math.cos(angleRad);
+            const s = Math.sin(angleRad);
+            const t = 1 - c;
+            
+            // Matriz de rotación de Rodrigues
+            const rotMatrix = [
+                [t*axisX*axisX + c,          t*axisX*axisY - s*axisZ,    t*axisX*axisZ + s*axisY],
+                [t*axisX*axisY + s*axisZ,    t*axisY*axisY + c,          t*axisY*axisZ - s*axisX],
+                [t*axisX*axisZ - s*axisY,    t*axisY*axisZ + s*axisX,    t*axisZ*axisZ + c]
+            ];
+            
+            // Obtener los átomos del modelo
+            const atoms = model.selectedAtoms({});
+            if (atoms.length === 0) return;
+            
+            // Calcular el centro de masa para rotar alrededor de él
+            let centerX = 0, centerY = 0, centerZ = 0;
+            for (const atom of atoms) {
+                centerX += atom.x;
+                centerY += atom.y;
+                centerZ += atom.z;
+            }
+            centerX /= atoms.length;
+            centerY /= atoms.length;
+            centerZ /= atoms.length;
+            
+            // Aplicar rotación a cada átomo
+            for (const atom of atoms) {
+                // Trasladar al origen
+                const x = atom.x - centerX;
+                const y = atom.y - centerY;
+                const z = atom.z - centerZ;
+                
+                // Aplicar rotación
+                const newX = rotMatrix[0][0]*x + rotMatrix[0][1]*y + rotMatrix[0][2]*z;
+                const newY = rotMatrix[1][0]*x + rotMatrix[1][1]*y + rotMatrix[1][2]*z;
+                const newZ = rotMatrix[2][0]*x + rotMatrix[2][1]*y + rotMatrix[2][2]*z;
+                
+                // Trasladar de vuelta
+                atom.x = newX + centerX;
+                atom.y = newY + centerY;
+                atom.z = newZ + centerZ;
+            }
+            
+            console.log(`Rotación de eje arbitrario aplicada: (${axisX.toFixed(3)}, ${axisY.toFixed(3)}, ${axisZ.toFixed(3)}) @ ${angle.toFixed(1)}°`);
+        } catch (error) {
+            console.error('Error aplicando rotación de eje arbitrario:', error);
         }
     }
 }
