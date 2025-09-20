@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Encuentra la Molécula!</title>
+    <!-- Fuentes de Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Biblioteca 3Dmol.js para visualización de moléculas 3D -->
+    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <!-- Hoja de estilos CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Pantalla de Bienvenida -->
+        <div id="welcome-screen" class="screen active">
+            <div class="welcome-main-content">
+                <h1>¡ENCUENTRA LA MOLÉCULA!</h1>
+                <div class="instructions">
+                    <p>¡Hola! Bienvenido al juego de moléculas</p>
+                    <p>Tienes que encontrar la molécula correcta</p>
+                    <p>¡Tienes 1 minuto para acertar todas las posibles!</p>
+                    <p>Escribe tu nombre y presiona el botón para empezar</p>
+                </div>
+                <div class="name-input">
+                    <label for="player-name">Tu nombre:</label>
+                    <input type="text" id="player-name" maxlength="20" placeholder="Ingresa tu nombre">
+                </div>
+                <button id="start-button" disabled>¡COMENZAR!</button>
+            </div>
+            <div class="welcome-ranking">
+                <div class="ranking-sidebar">
+                    <h2>RANKING</h2>
+                    <div id="rankings-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla Principal del Juego -->
+        <div id="game-screen" class="screen">
+            <div class="game-container">
+                <div class="game-info">
+                    <div class="player-info">
+                        <div id="player-name-display">Jugador: </div>
+                        <div id="score-display">Aciertos: 0</div>
+                        <div id="attempts-display">Intentos: 0</div>
+                        <div id="accuracy-display">Precisión: 0%</div>
+                    </div>
+                    <div class="timer">Tiempo: <span id="time-left">60</span>s</div>
+                </div>
+                <div class="game-grid-2x2">
+                    <div class="grid-cell query-cell">
+                        <h2>Encuentra: <span id="target-molecule-name"></span></h2>
+                        <div id="target-molecule" class="molecule-container query-molecule"></div>
+                        <div id="feedback-message"></div>
+                    </div>
+                    <div class="grid-cell option-cell option-right">
+                        <div class="molecule-choice">
+                            <div id="option-0" class="molecule-option"></div>
+                            <div class="button-container">
+                                <button class="select-button right-button" id="select-0">✓</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-cell option-cell option-left">
+                        <div class="molecule-choice">
+                            <div class="button-container">
+                                <button class="select-button left-button" id="select-1">✓</button>
+                            </div>
+                            <div id="option-1" class="molecule-option"></div>
+                        </div>
+                    </div>
+                    <div class="grid-cell option-cell option-right">
+                        <div class="molecule-choice">
+                            <div id="option-2" class="molecule-option"></div>
+                            <div class="button-container">
+                                <button class="select-button right-button" id="select-2">✓</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Game Over -->
+        <div id="game-over-screen" class="screen">
+            <h1>¡JUEGO TERMINADO!</h1>
+            <div id="final-stats"></div>
+            <button id="play-again-button">Jugar de nuevo</button>
+        </div>
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script src="js/molecule-parser.js"></script>
+    <script src="js/molecule-viewer.js"></script>
+    <script src="js/ranking.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+@<TRIPOS>MOLECULE
+DB09155
+    1     0     0     0     0
+SMALL
+NO_CHARGES
+
+@<TRIPOS>ATOM
+      1 He1         0.0000    0.0000    0.0000 He        1 <0>         0.0000
+@<TRIPOS>BOND

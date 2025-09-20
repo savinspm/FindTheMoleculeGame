@@ -1,0 +1,10 @@
+@<TRIPOS>MOLECULE
+DB00761
+    2     0     0     0     0
+SMALL
+USER_CHARGES
+
+@<TRIPOS>ATOM
+      1 K1         -1.5010    0.0000    0.0000 K         1 <0>         1.0000
+      2 Cl1         1.5010    0.0000    0.0000 Cl        1 <0>        -1.0000
+@<TRIPOS>BOND

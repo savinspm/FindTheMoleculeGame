@@ -1,0 +1,11 @@
+@<TRIPOS>MOLECULE
+DB09152
+    2     1     0     0     0
+SMALL
+NO_CHARGES
+
+@<TRIPOS>ATOM
+      1 N1         -0.5565    0.0000    0.0000 N.1       1 <0>         0.0000
+      2 N2          0.5565    0.0000    0.0000 N.1       1 <0>         0.0000
+@<TRIPOS>BOND
+     1    1    2 3

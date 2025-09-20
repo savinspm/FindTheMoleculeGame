@@ -1,0 +1,13 @@
+@<TRIPOS>MOLECULE
+DB09131
+    3     2     0     0     0
+SMALL
+USER_CHARGES
+
+@<TRIPOS>ATOM
+      1 Cl1        -1.5795    0.5265    0.0000 Cl        1 <0>        -0.2900
+      2 Cu1         0.0000   -1.0530    0.0000 Cu        1 <0>         0.5800
+      3 Cl2         1.5795    0.5265    0.0000 Cl        1 <0>        -0.2900
+@<TRIPOS>BOND
+     1    1    2 1
+     2    2    3 1

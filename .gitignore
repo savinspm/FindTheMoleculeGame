@@ -205,3 +205,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Exclude contents of preliminary database folder
+molecule-game-web/data/preliminaryDB/*
+# Keep the folder itself
+!molecule-game-web/data/preliminaryDB/.gitkeep

@@ -1,0 +1,10 @@
+@<TRIPOS>MOLECULE
+DB09316
+    2     0     0     0     0
+SMALL
+USER_CHARGES
+
+@<TRIPOS>ATOM
+      1 Tl1        -1.4715    0.0000    0.0000 Tl        1 <0>         1.0000
+      2 Cl1         1.4715    0.0000    0.0000 Cl        1 <0>        -1.0000
+@<TRIPOS>BOND

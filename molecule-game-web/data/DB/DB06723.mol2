@@ -1,0 +1,9 @@
+@<TRIPOS>MOLECULE
+DB06723
+    1     0     0     0     0
+SMALL
+USER_CHARGES
+
+@<TRIPOS>ATOM
+      1 Al1         0.0000    0.0000    0.0000 Al        1 <0>         3.0000
+@<TRIPOS>BOND

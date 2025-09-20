@@ -1,0 +1,11 @@
+@<TRIPOS>MOLECULE
+DB00971
+    2     1     0     0     0
+SMALL
+USER_CHARGES
+
+@<TRIPOS>ATOM
+      1 Se1        -1.0155    0.0000    0.0000 Se        1 <0>         0.0070
+      2 S1          1.0155    0.0000    0.0000 S.2       1 <0>        -0.0070
+@<TRIPOS>BOND
+     1    1    2 2

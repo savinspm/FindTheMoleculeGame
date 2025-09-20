@@ -1,0 +1,2285 @@
+{
+  "levels": [
+    {
+      "target": {
+        "name": "DB09127",
+        "file": "DB09127.mol2",
+        "atom_count": 5
+      },
+      "similar": [
+        {
+          "name": "DB01377",
+          "file": "DB01377.mol2",
+          "atom_count": 5
+        },
+        {
+          "name": "DB09087",
+          "file": "DB09087.mol2",
+          "atom_count": 5
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01169",
+        "file": "DB01169.mol2",
+        "atom_count": 5
+      },
+      "similar": [
+        {
+          "name": "DB00653",
+          "file": "DB00653.mol2",
+          "atom_count": 6
+        },
+        {
+          "name": "DB00258",
+          "file": "DB00258.mol2",
+          "atom_count": 7
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB03166",
+        "file": "DB03166.mol2",
+        "atom_count": 7
+      },
+      "similar": [
+        {
+          "name": "DB01159",
+          "file": "DB01159.mol2",
+          "atom_count": 8
+        },
+        {
+          "name": "DB09147",
+          "file": "DB09147.mol2",
+          "atom_count": 9
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00536",
+        "file": "DB00536.mol2",
+        "atom_count": 9
+      },
+      "similar": [
+        {
+          "name": "DB01005",
+          "file": "DB01005.mol2",
+          "atom_count": 9
+        },
+        {
+          "name": "DB00119",
+          "file": "DB00119.mol2",
+          "atom_count": 9
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00898",
+        "file": "DB00898.mol2",
+        "atom_count": 9
+      },
+      "similar": [
+        {
+          "name": "DB00515",
+          "file": "DB00515.mol2",
+          "atom_count": 9
+        },
+        {
+          "name": "DB00551",
+          "file": "DB00551.mol2",
+          "atom_count": 10
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00529",
+        "file": "DB00529.mol2",
+        "atom_count": 10
+      },
+      "similar": [
+        {
+          "name": "DB01093",
+          "file": "DB01093.mol2",
+          "atom_count": 10
+        },
+        {
+          "name": "DB00145",
+          "file": "DB00145.mol2",
+          "atom_count": 10
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00556",
+        "file": "DB00556.mol2",
+        "atom_count": 11
+      },
+      "similar": [
+        {
+          "name": "DB06768",
+          "file": "DB06768.mol2",
+          "atom_count": 11
+        },
+        {
+          "name": "DB09138",
+          "file": "DB09138.mol2",
+          "atom_count": 11
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB04398",
+        "file": "DB04398.mol2",
+        "atom_count": 11
+      },
+      "similar": [
+        {
+          "name": "DB00847",
+          "file": "DB00847.mol2",
+          "atom_count": 11
+        },
+        {
+          "name": "DB09110",
+          "file": "DB09110.mol2",
+          "atom_count": 12
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01189",
+        "file": "DB01189.mol2",
+        "atom_count": 12
+      },
+      "similar": [
+        {
+          "name": "DB01028",
+          "file": "DB01028.mol2",
+          "atom_count": 12
+        },
+        {
+          "name": "DB01213",
+          "file": "DB01213.mol2",
+          "atom_count": 12
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00228",
+        "file": "DB00228.mol2",
+        "atom_count": 12
+      },
+      "similar": [
+        {
+          "name": "DB00753",
+          "file": "DB00753.mol2",
+          "atom_count": 12
+        },
+        {
+          "name": "DB00544",
+          "file": "DB00544.mol2",
+          "atom_count": 12
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09314",
+        "file": "DB09314.mol2",
+        "atom_count": 12
+      },
+      "similar": [
+        {
+          "name": "DB09294",
+          "file": "DB09294.mol2",
+          "atom_count": 12
+        },
+        {
+          "name": "DB09257",
+          "file": "DB09257.mol2",
+          "atom_count": 12
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09281",
+        "file": "DB09281.mol2",
+        "atom_count": 13
+      },
+      "similar": [
+        {
+          "name": "DB06637",
+          "file": "DB06637.mol2",
+          "atom_count": 13
+        },
+        {
+          "name": "DB03209",
+          "file": "DB03209.mol2",
+          "atom_count": 13
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB03255",
+        "file": "DB03255.mol2",
+        "atom_count": 13
+      },
+      "similar": [
+        {
+          "name": "DB00160",
+          "file": "DB00160.mol2",
+          "atom_count": 13
+        },
+        {
+          "name": "DB01375",
+          "file": "DB01375.mol2",
+          "atom_count": 13
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB06783",
+        "file": "DB06783.mol2",
+        "atom_count": 13
+      },
+      "similar": [
+        {
+          "name": "DB00325",
+          "file": "DB00325.mol2",
+          "atom_count": 13
+        },
+        {
+          "name": "DB01099",
+          "file": "DB01099.mol2",
+          "atom_count": 13
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00763",
+        "file": "DB00763.mol2",
+        "atom_count": 13
+      },
+      "similar": [
+        {
+          "name": "DB00151",
+          "file": "DB00151.mol2",
+          "atom_count": 14
+        },
+        {
+          "name": "DB03793",
+          "file": "DB03793.mol2",
+          "atom_count": 14
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01033",
+        "file": "DB01033.mol2",
+        "atom_count": 14
+      },
+      "similar": [
+        {
+          "name": "DB00437",
+          "file": "DB00437.mol2",
+          "atom_count": 14
+        },
+        {
+          "name": "DB00339",
+          "file": "DB00339.mol2",
+          "atom_count": 14
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00139",
+        "file": "DB00139.mol2",
+        "atom_count": 14
+      },
+      "similar": [
+        {
+          "name": "DB01440",
+          "file": "DB01440.mol2",
+          "atom_count": 14
+        },
+        {
+          "name": "DB06782",
+          "file": "DB06782.mol2",
+          "atom_count": 14
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00260",
+        "file": "DB00260.mol2",
+        "atom_count": 14
+      },
+      "similar": [
+        {
+          "name": "DB00627",
+          "file": "DB00627.mol2",
+          "atom_count": 14
+        },
+        {
+          "name": "DB00133",
+          "file": "DB00133.mol2",
+          "atom_count": 14
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00720",
+        "file": "DB00720.mol2",
+        "atom_count": 15
+      },
+      "similar": [
+        {
+          "name": "DB00828",
+          "file": "DB00828.mol2",
+          "atom_count": 15
+        },
+        {
+          "name": "DB01398",
+          "file": "DB01398.mol2",
+          "atom_count": 15
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB02701",
+        "file": "DB02701.mol2",
+        "atom_count": 15
+      },
+      "similar": [
+        {
+          "name": "DB00356",
+          "file": "DB00356.mol2",
+          "atom_count": 15
+        },
+        {
+          "name": "DB01397",
+          "file": "DB01397.mol2",
+          "atom_count": 15
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01401",
+        "file": "DB01401.mol2",
+        "atom_count": 15
+      },
+      "similar": [
+        {
+          "name": "DB09276",
+          "file": "DB09276.mol2",
+          "atom_count": 15
+        },
+        {
+          "name": "DB00173",
+          "file": "DB00173.mol2",
+          "atom_count": 15
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01236",
+        "file": "DB01236.mol2",
+        "atom_count": 15
+      },
+      "similar": [
+        {
+          "name": "DB00936",
+          "file": "DB00936.mol2",
+          "atom_count": 16
+        },
+        {
+          "name": "DB00566",
+          "file": "DB00566.mol2",
+          "atom_count": 16
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00592",
+        "file": "DB00592.mol2",
+        "atom_count": 16
+      },
+      "similar": [
+        {
+          "name": "DB00128",
+          "file": "DB00128.mol2",
+          "atom_count": 16
+        },
+        {
+          "name": "DB00352",
+          "file": "DB00352.mol2",
+          "atom_count": 16
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB06770",
+        "file": "DB06770.mol2",
+        "atom_count": 16
+      },
+      "similar": [
+        {
+          "name": "DB00233",
+          "file": "DB00233.mol2",
+          "atom_count": 17
+        },
+        {
+          "name": "DB00244",
+          "file": "DB00244.mol2",
+          "atom_count": 17
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00951",
+        "file": "DB00951.mol2",
+        "atom_count": 17
+      },
+      "similar": [
+        {
+          "name": "DB00156",
+          "file": "DB00156.mol2",
+          "atom_count": 17
+        },
+        {
+          "name": "DB00174",
+          "file": "DB00174.mol2",
+          "atom_count": 17
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01294",
+        "file": "DB01294.mol2",
+        "atom_count": 17
+      },
+      "similar": [
+        {
+          "name": "DB08797",
+          "file": "DB08797.mol2",
+          "atom_count": 17
+        },
+        {
+          "name": "DB09041",
+          "file": "DB09041.mol2",
+          "atom_count": 17
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00172",
+        "file": "DB00172.mol2",
+        "atom_count": 17
+      },
+      "similar": [
+        {
+          "name": "DB01243",
+          "file": "DB01243.mol2",
+          "atom_count": 18
+        },
+        {
+          "name": "DB09243",
+          "file": "DB09243.mol2",
+          "atom_count": 18
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00189",
+        "file": "DB00189.mol2",
+        "atom_count": 18
+      },
+      "similar": [
+        {
+          "name": "DB00272",
+          "file": "DB00272.mol2",
+          "atom_count": 18
+        },
+        {
+          "name": "DB09116",
+          "file": "DB09116.mol2",
+          "atom_count": 18
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00793",
+        "file": "DB00793.mol2",
+        "atom_count": 18
+      },
+      "similar": [
+        {
+          "name": "DB00855",
+          "file": "DB00855.mol2",
+          "atom_count": 18
+        },
+        {
+          "name": "DB09269",
+          "file": "DB09269.mol2",
+          "atom_count": 18
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB08908",
+        "file": "DB08908.mol2",
+        "atom_count": 18
+      },
+      "similar": [
+        {
+          "name": "DB09159",
+          "file": "DB09159.mol2",
+          "atom_count": 18
+        },
+        {
+          "name": "DB06151",
+          "file": "DB06151.mol2",
+          "atom_count": 18
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09115",
+        "file": "DB09115.mol2",
+        "atom_count": 18
+      },
+      "similar": [
+        {
+          "name": "DB09154",
+          "file": "DB09154.mol2",
+          "atom_count": 18
+        },
+        {
+          "name": "DB00431",
+          "file": "DB00431.mol2",
+          "atom_count": 18
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB08847",
+        "file": "DB08847.mol2",
+        "atom_count": 18
+      },
+      "similar": [
+        {
+          "name": "DB00148",
+          "file": "DB00148.mol2",
+          "atom_count": 18
+        },
+        {
+          "name": "DB09125",
+          "file": "DB09125.mol2",
+          "atom_count": 18
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00259",
+        "file": "DB00259.mol2",
+        "atom_count": 19
+      },
+      "similar": [
+        {
+          "name": "DB00347",
+          "file": "DB00347.mol2",
+          "atom_count": 19
+        },
+        {
+          "name": "DB01612",
+          "file": "DB01612.mol2",
+          "atom_count": 19
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00516",
+        "file": "DB00516.mol2",
+        "atom_count": 19
+      },
+      "similar": [
+        {
+          "name": "DB00819",
+          "file": "DB00819.mol2",
+          "atom_count": 19
+        },
+        {
+          "name": "DB00161",
+          "file": "DB00161.mol2",
+          "atom_count": 19
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB04339",
+        "file": "DB04339.mol2",
+        "atom_count": 19
+      },
+      "similar": [
+        {
+          "name": "DB00733",
+          "file": "DB00733.mol2",
+          "atom_count": 19
+        },
+        {
+          "name": "DB08826",
+          "file": "DB08826.mol2",
+          "atom_count": 19
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01077",
+        "file": "DB01077.mol2",
+        "atom_count": 19
+      },
+      "similar": [
+        {
+          "name": "DB00888",
+          "file": "DB00888.mol2",
+          "atom_count": 19
+        },
+        {
+          "name": "DB00331",
+          "file": "DB00331.mol2",
+          "atom_count": 20
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00130",
+        "file": "DB00130.mol2",
+        "atom_count": 20
+      },
+      "similar": [
+        {
+          "name": "DB01275",
+          "file": "DB01275.mol2",
+          "atom_count": 20
+        },
+        {
+          "name": "DB00126",
+          "file": "DB00126.mol2",
+          "atom_count": 20
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00740",
+        "file": "DB00740.mol2",
+        "atom_count": 20
+      },
+      "similar": [
+        {
+          "name": "DB01080",
+          "file": "DB01080.mol2",
+          "atom_count": 20
+        },
+        {
+          "name": "DB00853",
+          "file": "DB00853.mol2",
+          "atom_count": 20
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01422",
+        "file": "DB01422.mol2",
+        "atom_count": 20
+      },
+      "similar": [
+        {
+          "name": "DB09161",
+          "file": "DB09161.mol2",
+          "atom_count": 20
+        },
+        {
+          "name": "DB00316",
+          "file": "DB00316.mol2",
+          "atom_count": 20
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00117",
+        "file": "DB00117.mol2",
+        "atom_count": 20
+      },
+      "similar": [
+        {
+          "name": "DB00727",
+          "file": "DB00727.mol2",
+          "atom_count": 20
+        },
+        {
+          "name": "DB00859",
+          "file": "DB00859.mol2",
+          "atom_count": 20
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00336",
+        "file": "DB00336.mol2",
+        "atom_count": 20
+      },
+      "similar": [
+        {
+          "name": "DB00134",
+          "file": "DB00134.mol2",
+          "atom_count": 20
+        },
+        {
+          "name": "DB01303",
+          "file": "DB01303.mol2",
+          "atom_count": 20
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB03754",
+        "file": "DB03754.mol2",
+        "atom_count": 20
+      },
+      "similar": [
+        {
+          "name": "DB09210",
+          "file": "DB09210.mol2",
+          "atom_count": 20
+        },
+        {
+          "name": "DB00147",
+          "file": "DB00147.mol2",
+          "atom_count": 21
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01412",
+        "file": "DB01412.mol2",
+        "atom_count": 21
+      },
+      "similar": [
+        {
+          "name": "DB00262",
+          "file": "DB00262.mol2",
+          "atom_count": 21
+        },
+        {
+          "name": "DB01223",
+          "file": "DB01223.mol2",
+          "atom_count": 21
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00170",
+        "file": "DB00170.mol2",
+        "atom_count": 21
+      },
+      "similar": [
+        {
+          "name": "DB00609",
+          "file": "DB00609.mol2",
+          "atom_count": 21
+        },
+        {
+          "name": "DB00916",
+          "file": "DB00916.mol2",
+          "atom_count": 21
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00730",
+        "file": "DB00730.mol2",
+        "atom_count": 21
+      },
+      "similar": [
+        {
+          "name": "DB00550",
+          "file": "DB00550.mol2",
+          "atom_count": 21
+        },
+        {
+          "name": "DB00593",
+          "file": "DB00593.mol2",
+          "atom_count": 21
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00992",
+        "file": "DB00992.mol2",
+        "atom_count": 21
+      },
+      "similar": [
+        {
+          "name": "DB00658",
+          "file": "DB00658.mol2",
+          "atom_count": 21
+        },
+        {
+          "name": "DB06775",
+          "file": "DB06775.mol2",
+          "atom_count": 21
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09117",
+        "file": "DB09117.mol2",
+        "atom_count": 21
+      },
+      "similar": [
+        {
+          "name": "DB00122",
+          "file": "DB00122.mol2",
+          "atom_count": 21
+        },
+        {
+          "name": "DB01119",
+          "file": "DB01119.mol2",
+          "atom_count": 21
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00945",
+        "file": "DB00945.mol2",
+        "atom_count": 21
+      },
+      "similar": [
+        {
+          "name": "DB00752",
+          "file": "DB00752.mol2",
+          "atom_count": 21
+        },
+        {
+          "name": "DB00277",
+          "file": "DB00277.mol2",
+          "atom_count": 21
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00282",
+        "file": "DB00282.mol2",
+        "atom_count": 21
+      },
+      "similar": [
+        {
+          "name": "DB00129",
+          "file": "DB00129.mol2",
+          "atom_count": 21
+        },
+        {
+          "name": "DB00389",
+          "file": "DB00389.mol2",
+          "atom_count": 22
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00167",
+        "file": "DB00167.mol2",
+        "atom_count": 22
+      },
+      "similar": [
+        {
+          "name": "DB00629",
+          "file": "DB00629.mol2",
+          "atom_count": 22
+        },
+        {
+          "name": "DB00659",
+          "file": "DB00659.mol2",
+          "atom_count": 22
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00988",
+        "file": "DB00988.mol2",
+        "atom_count": 22
+      },
+      "similar": [
+        {
+          "name": "DB00909",
+          "file": "DB00909.mol2",
+          "atom_count": 22
+        },
+        {
+          "name": "DB00513",
+          "file": "DB00513.mol2",
+          "atom_count": 22
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00617",
+        "file": "DB00617.mol2",
+        "atom_count": 22
+      },
+      "similar": [
+        {
+          "name": "DB01144",
+          "file": "DB01144.mol2",
+          "atom_count": 22
+        },
+        {
+          "name": "DB00780",
+          "file": "DB00780.mol2",
+          "atom_count": 22
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00149",
+        "file": "DB00149.mol2",
+        "atom_count": 22
+      },
+      "similar": [
+        {
+          "name": "DB01020",
+          "file": "DB01020.mol2",
+          "atom_count": 22
+        },
+        {
+          "name": "DB00534",
+          "file": "DB00534.mol2",
+          "atom_count": 22
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09277",
+        "file": "DB09277.mol2",
+        "atom_count": 22
+      },
+      "similar": [
+        {
+          "name": "DB00703",
+          "file": "DB00703.mol2",
+          "atom_count": 22
+        },
+        {
+          "name": "DB06698",
+          "file": "DB06698.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09150",
+        "file": "DB09150.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB00594",
+          "file": "DB00594.mol2",
+          "atom_count": 23
+        },
+        {
+          "name": "DB06704",
+          "file": "DB06704.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01121",
+        "file": "DB01121.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB04572",
+          "file": "DB04572.mol2",
+          "atom_count": 23
+        },
+        {
+          "name": "DB00120",
+          "file": "DB00120.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00182",
+        "file": "DB00182.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB00614",
+          "file": "DB00614.mol2",
+          "atom_count": 23
+        },
+        {
+          "name": "DB00880",
+          "file": "DB00880.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01086",
+        "file": "DB01086.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB00766",
+          "file": "DB00766.mol2",
+          "atom_count": 23
+        },
+        {
+          "name": "DB00698",
+          "file": "DB00698.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB06795",
+        "file": "DB06795.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB00368",
+          "file": "DB00368.mol2",
+          "atom_count": 23
+        },
+        {
+          "name": "DB00165",
+          "file": "DB00165.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09256",
+        "file": "DB09256.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB01427",
+          "file": "DB01427.mol2",
+          "atom_count": 23
+        },
+        {
+          "name": "DB00261",
+          "file": "DB00261.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB06819",
+        "file": "DB06819.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB00575",
+          "file": "DB00575.mol2",
+          "atom_count": 23
+        },
+        {
+          "name": "DB00851",
+          "file": "DB00851.mol2",
+          "atom_count": 23
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00555",
+        "file": "DB00555.mol2",
+        "atom_count": 23
+      },
+      "similar": [
+        {
+          "name": "DB00824",
+          "file": "DB00824.mol2",
+          "atom_count": 24
+        },
+        {
+          "name": "DB01018",
+          "file": "DB01018.mol2",
+          "atom_count": 24
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB08604",
+        "file": "DB08604.mol2",
+        "atom_count": 24
+      },
+      "similar": [
+        {
+          "name": "DB01576",
+          "file": "DB01576.mol2",
+          "atom_count": 24
+        },
+        {
+          "name": "DB01055",
+          "file": "DB01055.mol2",
+          "atom_count": 24
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00634",
+        "file": "DB00634.mol2",
+        "atom_count": 24
+      },
+      "similar": [
+        {
+          "name": "DB09086",
+          "file": "DB09086.mol2",
+          "atom_count": 24
+        },
+        {
+          "name": "DB00697",
+          "file": "DB00697.mol2",
+          "atom_count": 24
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00883",
+        "file": "DB00883.mol2",
+        "atom_count": 24
+      },
+      "similar": [
+        {
+          "name": "DB00397",
+          "file": "DB00397.mol2",
+          "atom_count": 24
+        },
+        {
+          "name": "DB00856",
+          "file": "DB00856.mol2",
+          "atom_count": 24
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00553",
+        "file": "DB00553.mol2",
+        "atom_count": 24
+      },
+      "similar": [
+        {
+          "name": "DB00135",
+          "file": "DB00135.mol2",
+          "atom_count": 24
+        },
+        {
+          "name": "DB00201",
+          "file": "DB00201.mol2",
+          "atom_count": 24
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09220",
+        "file": "DB09220.mol2",
+        "atom_count": 24
+      },
+      "similar": [
+        {
+          "name": "DB00797",
+          "file": "DB00797.mol2",
+          "atom_count": 24
+        },
+        {
+          "name": "DB00345",
+          "file": "DB00345.mol2",
+          "atom_count": 24
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00235",
+        "file": "DB00235.mol2",
+        "atom_count": 25
+      },
+      "similar": [
+        {
+          "name": "DB00999",
+          "file": "DB00999.mol2",
+          "atom_count": 25
+        },
+        {
+          "name": "DB00832",
+          "file": "DB00832.mol2",
+          "atom_count": 25
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01235",
+        "file": "DB01235.mol2",
+        "atom_count": 25
+      },
+      "similar": [
+        {
+          "name": "DB00388",
+          "file": "DB00388.mol2",
+          "atom_count": 25
+        },
+        {
+          "name": "DB06201",
+          "file": "DB06201.mol2",
+          "atom_count": 25
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00964",
+        "file": "DB00964.mol2",
+        "atom_count": 25
+      },
+      "similar": [
+        {
+          "name": "DB00677",
+          "file": "DB00677.mol2",
+          "atom_count": 25
+        },
+        {
+          "name": "DB01031",
+          "file": "DB01031.mol2",
+          "atom_count": 25
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB06243",
+        "file": "DB06243.mol2",
+        "atom_count": 25
+      },
+      "similar": [
+        {
+          "name": "DB00155",
+          "file": "DB00155.mol2",
+          "atom_count": 25
+        },
+        {
+          "name": "DB06147",
+          "file": "DB06147.mol2",
+          "atom_count": 25
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB06794",
+        "file": "DB06794.mol2",
+        "atom_count": 25
+      },
+      "similar": [
+        {
+          "name": "DB00123",
+          "file": "DB00123.mol2",
+          "atom_count": 25
+        },
+        {
+          "name": "DB00610",
+          "file": "DB00610.mol2",
+          "atom_count": 25
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00885",
+        "file": "DB00885.mol2",
+        "atom_count": 25
+      },
+      "similar": [
+        {
+          "name": "DB00958",
+          "file": "DB00958.mol2",
+          "atom_count": 25
+        },
+        {
+          "name": "DB02513",
+          "file": "DB02513.mol2",
+          "atom_count": 25
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01202",
+        "file": "DB01202.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB01613",
+          "file": "DB01613.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB00583",
+          "file": "DB00583.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00184",
+        "file": "DB00184.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB01296",
+          "file": "DB01296.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB00166",
+          "file": "DB00166.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00668",
+        "file": "DB00668.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB00399",
+          "file": "DB00399.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB00993",
+          "file": "DB00993.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00879",
+        "file": "DB00879.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB01638",
+          "file": "DB01638.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB01435",
+          "file": "DB01435.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB06799",
+        "file": "DB06799.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB00138",
+          "file": "DB00138.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB05245",
+          "file": "DB05245.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00545",
+        "file": "DB00545.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB00791",
+          "file": "DB00791.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB00181",
+          "file": "DB00181.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00302",
+        "file": "DB00302.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB06262",
+          "file": "DB06262.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB00709",
+          "file": "DB00709.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00861",
+        "file": "DB00861.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB00313",
+          "file": "DB00313.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB00411",
+          "file": "DB00411.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01133",
+        "file": "DB01133.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB01626",
+          "file": "DB01626.mol2",
+          "atom_count": 26
+        },
+        {
+          "name": "DB00191",
+          "file": "DB00191.mol2",
+          "atom_count": 26
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00742",
+        "file": "DB00742.mol2",
+        "atom_count": 26
+      },
+      "similar": [
+        {
+          "name": "DB00852",
+          "file": "DB00852.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB01577",
+          "file": "DB01577.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01367",
+        "file": "DB01367.mol2",
+        "atom_count": 27
+      },
+      "similar": [
+        {
+          "name": "DB00576",
+          "file": "DB00576.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB00756",
+          "file": "DB00756.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00150",
+        "file": "DB00150.mol2",
+        "atom_count": 27
+      },
+      "similar": [
+        {
+          "name": "DB04840",
+          "file": "DB04840.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB01438",
+          "file": "DB01438.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00526",
+        "file": "DB00526.mol2",
+        "atom_count": 27
+      },
+      "similar": [
+        {
+          "name": "DB01423",
+          "file": "DB01423.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB01123",
+          "file": "DB01123.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00765",
+        "file": "DB00765.mol2",
+        "atom_count": 27
+      },
+      "similar": [
+        {
+          "name": "DB00600",
+          "file": "DB00600.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB08924",
+          "file": "DB08924.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00787",
+        "file": "DB00787.mol2",
+        "atom_count": 27
+      },
+      "similar": [
+        {
+          "name": "DB01143",
+          "file": "DB01143.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB00359",
+          "file": "DB00359.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00498",
+        "file": "DB00498.mol2",
+        "atom_count": 27
+      },
+      "similar": [
+        {
+          "name": "DB06707",
+          "file": "DB06707.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB00630",
+          "file": "DB00630.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00125",
+        "file": "DB00125.mol2",
+        "atom_count": 27
+      },
+      "similar": [
+        {
+          "name": "DB00754",
+          "file": "DB00754.mol2",
+          "atom_count": 27
+        },
+        {
+          "name": "DB00484",
+          "file": "DB00484.mol2",
+          "atom_count": 27
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01097",
+        "file": "DB01097.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB00891",
+          "file": "DB00891.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB01015",
+          "file": "DB01015.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00649",
+        "file": "DB00649.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB01019",
+          "file": "DB01019.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB01262",
+          "file": "DB01262.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00648",
+        "file": "DB00648.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB09218",
+          "file": "DB09218.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB00874",
+          "file": "DB00874.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB04552",
+        "file": "DB04552.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB05246",
+          "file": "DB05246.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB09245",
+          "file": "DB09245.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB08946",
+        "file": "DB08946.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB00249",
+          "file": "DB00249.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB01008",
+          "file": "DB01008.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01399",
+        "file": "DB01399.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB02959",
+          "file": "DB02959.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB00968",
+          "file": "DB00968.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01197",
+        "file": "DB01197.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB01010",
+          "file": "DB01010.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB00744",
+          "file": "DB00744.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00271",
+        "file": "DB00271.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB00676",
+          "file": "DB00676.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB00230",
+          "file": "DB00230.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00322",
+        "file": "DB00322.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB00915",
+          "file": "DB00915.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB01021",
+          "file": "DB01021.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00774",
+        "file": "DB00774.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB00830",
+          "file": "DB00830.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB01364",
+          "file": "DB01364.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00943",
+        "file": "DB00943.mol2",
+        "atom_count": 28
+      },
+      "similar": [
+        {
+          "name": "DB00884",
+          "file": "DB00884.mol2",
+          "atom_count": 28
+        },
+        {
+          "name": "DB09133",
+          "file": "DB09133.mol2",
+          "atom_count": 28
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01428",
+        "file": "DB01428.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB06709",
+          "file": "DB06709.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB09242",
+          "file": "DB09242.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB05016",
+        "file": "DB05016.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB00900",
+          "file": "DB00900.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB04948",
+          "file": "DB04948.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00531",
+        "file": "DB00531.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB09028",
+          "file": "DB09028.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB00911",
+          "file": "DB00911.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00548",
+        "file": "DB00548.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB01174",
+          "file": "DB01174.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB00250",
+          "file": "DB00250.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01181",
+        "file": "DB01181.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB01178",
+          "file": "DB01178.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB01600",
+          "file": "DB01600.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00441",
+        "file": "DB00441.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB00928",
+          "file": "DB00928.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB04880",
+          "file": "DB04880.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB04571",
+        "file": "DB04571.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB00217",
+          "file": "DB00217.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB00779",
+          "file": "DB00779.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09221",
+        "file": "DB09221.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB00811",
+          "file": "DB00811.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB00827",
+          "file": "DB00827.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09216",
+        "file": "DB09216.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB01558",
+          "file": "DB01558.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB01352",
+          "file": "DB01352.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00996",
+        "file": "DB00996.mol2",
+        "atom_count": 29
+      },
+      "similar": [
+        {
+          "name": "DB06803",
+          "file": "DB06803.mol2",
+          "atom_count": 29
+        },
+        {
+          "name": "DB01041",
+          "file": "DB01041.mol2",
+          "atom_count": 29
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00794",
+        "file": "DB00794.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB00350",
+          "file": "DB00350.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB01107",
+          "file": "DB01107.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB09151",
+        "file": "DB09151.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB00263",
+          "file": "DB00263.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB00672",
+          "file": "DB00672.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00625",
+        "file": "DB00625.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB00185",
+          "file": "DB00185.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB00384",
+          "file": "DB00384.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01273",
+        "file": "DB01273.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB00507",
+          "file": "DB00507.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB00141",
+          "file": "DB00141.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00205",
+        "file": "DB00205.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB01511",
+          "file": "DB01511.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB01158",
+          "file": "DB01158.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00499",
+        "file": "DB00499.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB00564",
+          "file": "DB00564.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB00987",
+          "file": "DB00987.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB01247",
+        "file": "DB01247.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB06255",
+          "file": "DB06255.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB01250",
+          "file": "DB01250.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB08933",
+        "file": "DB08933.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB00379",
+          "file": "DB00379.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB00586",
+          "file": "DB00586.mol2",
+          "atom_count": 30
+        }
+      ]
+    },
+    {
+      "target": {
+        "name": "DB00939",
+        "file": "DB00939.mol2",
+        "atom_count": 30
+      },
+      "similar": [
+        {
+          "name": "DB01056",
+          "file": "DB01056.mol2",
+          "atom_count": 30
+        },
+        {
+          "name": "DB01365",
+          "file": "DB01365.mol2",
+          "atom_count": 30
+        }
+      ]
+    }
+  ],
+  "total": 120
+}

@@ -1,0 +1,869 @@
+/* Layout principal con ranking lateral */
+.main-game-layout {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 90vh;
+    align-items: stretch;
+    justify-content: space-between;
+}
+.game-grid-2x2 {
+    flex: 2;
+}
+.ranking-sidebar.right {
+    flex: 1;
+    height: 100%;
+    background-color: var(--white);
+    border-left: 4px solid var(--blue);
+    padding: 32px 18px 32px 18px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    min-width: 260px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.ranking-sidebar.right h2 {
+    text-align: center;
+    color: var(--purple);
+    margin-bottom: 20px;
+    font-size: var(--font-medium);
+}
+.ranking-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.ranking-item:nth-child(even) {
+    background-color: var(--background);
+}
+.ranking-item:nth-child(odd) {
+    background-color: var(--pink);
+}
+.player-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: var(--font-small);
+}
+.player-stats {
+    font-size: var(--font-small);
+}
+@media (max-width: 992px) {
+    #welcome-screen {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 20px;
+    }
+    
+    .welcome-main-content {
+        flex: none;
+        order: 1;
+    }
+    
+    .welcome-ranking {
+        flex: none;
+        min-width: 0;
+        max-width: 100%;
+        order: 2;
+    }
+    
+    .welcome-ranking .ranking-sidebar {
+        max-height: 300px;
+    }
+    
+    .name-input input {
+        width: 90%;
+        max-width: 400px;
+    }
+}
+/* Cuadrícula 2x2 para moléculas */
+/* Responsive 2x2 grid: barra arriba 10%, grid 90% */
+.game-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2.5vw;
+    width: 100%;
+    height: calc(90vh - 80px);
+    justify-items: center;
+    align-items: center;
+    margin: 0;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.grid-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+    max-width: 48vw;
+    max-height: 45vh;
+}
+
+.option-cell {
+    position: relative;
+    padding: 0;
+    overflow: visible;
+}
+
+.option-left, .option-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.query-cell {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.option-cell {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.query-molecule {
+    border: 6px solid var(--blue);
+    box-shadow: 0 0 24px var(--blue), 0 4px 16px rgba(0,0,0,0.10);
+    width: 90%;
+    height: 80%;
+    max-width: 100%;
+    max-height: 100%;
+}
+.molecule-option {
+    border: 6px solid var(--purple);
+    box-shadow: 0 0 24px var(--yellow), 0 4px 16px rgba(0,0,0,0.08);
+    width: 90%;
+    height: 80%;
+    max-width: 100%;
+    max-height: 100%;
+}
+:root {
+    /* Colores - basados en la versión original */
+    --background: #7FDBFF; /* Azul cielo */
+    --white: #FFFFFF;
+    --black: #222222;
+    --green: #2ECC40;
+    --red: #FF4136;
+    --yellow: #FFDC00;
+    --purple: #B10DC9;
+    --orange: #FF851B;
+    --pink: #FFB6C1;
+    --blue: #0074D9;
+
+    /* Colores para átomos */
+    --atom-h: #F0F0F0;
+    --atom-c: #808080;
+    --atom-n: #0000FF;
+    --atom-o: #FF0000;
+    --atom-s: #FFFF00;
+    --atom-p: #FF8000;
+    --atom-f: #00FF00;
+    --atom-cl: #00C800;
+
+    /* Tamaños de fuente */
+    --font-large: 2.5rem;
+    --font-medium: 1.2rem;
+    --font-small: 0.9rem;
+    --font-tiny: 0.7rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#app {
+    width: 100%;
+    height: 100vh;
+    max-width: 100vw;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    padding: 10px;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+    background-color: var(--background);
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Pantalla de Bienvenida */
+#welcome-screen {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 40px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.welcome-main-content {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 0;
+}
+
+.welcome-ranking {
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 40px;
+}
+
+#welcome-screen h1 {
+    font-size: var(--font-large);
+    color: var(--purple);
+    margin-bottom: 30px;
+}
+
+.instructions {
+    margin: 20px 0 40px;
+    line-height: 1.8;
+}
+
+.instructions p {
+    font-size: var(--font-medium);
+    color: var(--black);
+}
+
+.name-input {
+    margin: 20px 0;
+}
+
+.name-input label {
+    display: block;
+    font-size: var(--font-medium);
+    margin-bottom: 10px;
+}
+
+.name-input input {
+    width: 400px;
+    padding: 15px;
+    font-size: var(--font-medium);
+    border: 3px solid var(--black);
+    border-radius: 5px;
+    outline: none;
+}
+
+#start-button {
+    margin-top: 30px;
+    padding: 15px 30px;
+    font-size: var(--font-medium);
+    font-weight: bold;
+    background-color: var(--green);
+    color: var(--white);
+    border: 3px solid var(--black);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#start-button:hover {
+    transform: scale(1.05);
+}
+
+#start-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Pantalla del Juego */
+/* Estructura de dos columnas en la pantalla de juego */
+#game-screen {
+    flex-direction: row !important;
+    padding: 0;
+}
+
+.game-columns {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 80vh;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 60px;
+}
+.left-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 400px;
+    max-width: 700px;
+    height: 100%;
+}
+.right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 400px;
+    max-width: 700px;
+    height: 100%;
+}
+
+/* Opciones en columna vertical */
+.molecule-options.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.game-container {
+    width: 80%;
+    height: 100vh;
+    padding: 5px 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    justify-content: space-between;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    margin-bottom: 18px;
+    background: linear-gradient(90deg, var(--yellow) 0%, var(--pink) 100%);
+    border-radius: 18px;
+    padding: 18px;
+    border: 4px solid var(--blue);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.player-info > div {
+    margin: 0 10px 0 0;
+    font-size: 1.3rem;
+    font-weight: bold;
+    white-space: nowrap;
+    text-shadow: 1px 1px 0 var(--white);
+}
+
+.timer {
+    font-size: 1.3rem;
+    color: var(--red);
+    font-weight: bold;
+    white-space: nowrap;
+    text-shadow: 1px 1px 0 var(--white);
+}
+
+.target-molecule-section, .options-section {
+    text-align: center;
+    margin: 20px 0;
+    flex-shrink: 0;
+}
+
+.target-molecule-section h2, .options-section h2, .query-cell h2 {
+    color: var(--purple);
+    font-size: calc(var(--font-large) * 0.9);
+    margin-bottom: 18px;
+    margin-top: 0;
+}
+
+#target-molecule-name {
+    color: var(--blue);
+    font-weight: bold;
+    display: inline-block;
+    padding: 3px 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 6px;
+    margin-left: 5px;
+}
+
+/* El tamaño lo controla la grid y el width/height de .query-molecule/.molecule-option */
+.molecule-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--white);
+    border-radius: 18px;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- OPCIONES GRANDES Y VISUALES --- */
+/* Mantener horizontal solo si no es vertical */
+.molecule-options:not(.vertical) {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 32px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.molecule-choice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ensure proper spacing between elements */
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding: 0 10px; /* Add padding to prevent overlapping */
+}
+
+.option-right .molecule-choice {
+    flex-direction: row;
+}
+
+.option-left .molecule-choice {
+    flex-direction: row-reverse;
+}
+
+.molecule-choice:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px var(--yellow);
+}
+.molecule-option {
+    width: 80%; /* Reduced from fixed width to percentage */
+    height: 80%; /* Reduced from fixed height to percentage */
+    background-color: var(--white);
+    border: 6px solid var(--purple);
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex: 0 0 auto; /* Prevent flex item from growing/shrinking */
+}
+.molecule-option:hover {
+    transform: scale(1.06);
+    box-shadow: 0 4px 16px var(--purple);
+}
+@media (max-width: 992px) {
+    .molecule-options {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+    }
+    .molecule-option {
+        width: 75vw;
+        max-width: 300px;
+        height: 240px;
+    }
+    .molecule-choice {
+        padding: 5px;
+    }
+    .select-button {
+        font-size: 0.9rem;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+    }
+}
+@media (max-width: 576px) {
+    .molecule-option {
+        width: 75%;
+        height: 75%;
+        max-width: 180px;
+    }
+    .select-button {
+        font-size: 0.8rem;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border-width: 1px;
+    }
+    .option-left .molecule-choice,
+    .option-right .molecule-choice {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+    .button-container {
+        width: 100%;
+        margin: 5px 0;
+    }
+    .left-button, .right-button {
+        margin: 0;
+    }
+}
+/* --- FIN OPCIONES GRANDES Y VISUALES --- */
+
+/* Estilos para botones de selección */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15%; /* Allocate space for the button */
+    position: relative;
+}
+
+.select-button {
+    font-size: 1rem;
+    padding: 0;
+    border-radius: 50%;
+    font-weight: bold;
+    background-color: var(--blue);
+    color: var(--white);
+    border: 2px solid var(--black);
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.left-button {
+    margin-right: 10px;
+    transform-origin: right center;
+    position: relative;
+    z-index: 20; /* Ensure button stays above molecule */
+    left: 0; /* Don't use negative positioning */
+}
+
+.right-button {
+    margin-left: 10px;
+    transform-origin: left center;
+    position: relative;
+    z-index: 20; /* Ensure button stays above molecule */
+    right: 0; /* Don't use negative positioning */
+}
+
+.select-button:hover {
+    transform: scale(1.1);
+    background-color: var(--green);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+}
+
+.select-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.select-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.7;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.correct {
+    color: var(--green);
+    font-size: 2rem;
+    animation: pop 0.5s;
+}
+
+.incorrect {
+    color: var(--red);
+    font-size: 2rem;
+    animation: shake 0.5s;
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-8px); }
+    100% { transform: translateX(0); }
+}
+
+/* Sidebar de Rankings en bienvenida */
+.welcome-ranking .ranking-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    background-color: var(--white);
+    border: 4px solid var(--purple);
+    border-radius: 20px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+.welcome-ranking .ranking-sidebar h2 {
+    text-align: center;
+    color: var(--purple);
+    margin-bottom: 20px;
+    font-size: var(--font-medium);
+    font-weight: bold;
+}
+
+.welcome-ranking .ranking-item {
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+}
+
+.welcome-ranking .ranking-item:nth-child(even) {
+    background-color: var(--background);
+}
+
+.welcome-ranking .ranking-item:nth-child(odd) {
+    background-color: var(--pink);
+}
+
+.welcome-ranking .player-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: var(--font-small);
+    color: var(--black);
+}
+
+.welcome-ranking .player-stats {
+    font-size: var(--font-small);
+    color: var(--black);
+}
+
+.welcome-ranking .no-rankings {
+    text-align: center;
+    color: var(--purple);
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Pantalla de Game Over */
+#game-over-screen {
+    text-align: center;
+}
+
+#game-over-screen h1 {
+    font-size: var(--font-large);
+    color: var(--red);
+    margin-bottom: 30px;
+}
+
+#final-stats {
+    font-size: var(--font-medium);
+    margin: 20px 0 40px;
+    padding: 20px;
+    background-color: var(--white);
+    border-radius: 10px;
+    border: 2px solid var(--black);
+}
+
+#play-again-button {
+    padding: 15px 30px;
+    font-size: var(--font-medium);
+    font-weight: bold;
+    background-color: var(--orange);
+    color: var(--white);
+    border: 3px solid var(--black);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#play-again-button:hover {
+    transform: scale(1.05);
+}
+
+/* Estilos para elementos dentro de la visualización de moléculas */
+.molecule-rotate-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: var(--font-tiny);
+    color: var(--purple);
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 3px 0;
+    z-index: 10;
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .game-grid-2x2 {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 1fr);
+        gap: 2vw;
+        width: 100%;
+        height: calc(90vh - 80px);
+    }
+    .grid-cell {
+        width: 90vw;
+        height: 22vh;
+        max-width: 90vw;
+        max-height: 22vh;
+    }
+    .molecule-container, .query-molecule, .molecule-option {
+        width: 90%;
+        height: 90%;
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .option-left .molecule-choice,
+    .option-right .molecule-choice {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .left-button {
+        order: 1;
+    }
+    .option-left .molecule-option {
+        order: 2;
+    }
+}
+    .molecule-choice {
+        padding: 1vw 0.5vw 2vw 0.5vw;
+        width: 100%;
+        height: 100%;
+    }
+    .select-button {
+        font-size: 3vw;
+        padding: 1vw 2vw;
+        border-radius: 3vw;
+        margin-top: 1vw;
+        min-width: 32px;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+@media (max-width: 576px) {
+    :root {
+        --font-large: 1.3rem;
+        --font-medium: 0.85rem;
+        --font-small: 0.75rem;
+        --font-tiny: 0.6rem;
+    }
+    
+    .molecule-container {
+        width: 200px;
+        height: 140px;
+    }
+    
+    .molecule-option {
+        width: 140px;
+        height: 110px;
+        margin: 0 3px 5px;
+    }
+    
+    .game-info {
+        flex-direction: column;
+        align-items: center;
+        padding: 8px;
+        margin-bottom: 5px;
+        gap: 8px;
+    }
+    
+    .player-info {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 0;
+    }
+    
+    .player-info > div {
+        margin: 0;
+        font-size: var(--font-small);
+        font-weight: bold;
+    }
+    
+    .timer {
+        margin-top: 0;
+        font-size: var(--font-small);
+    }
+    
+    #feedback-message {
+        min-height: 20px;
+        margin: 3px 0;
+    }
+    
+    .molecule-rotate-hint {
+        font-size: 0.55rem;
+        bottom: 3px;
+    }
+    
+    .screen {
+        padding: 5px;
+    }
+    
+    .game-container {
+        padding: 3px 5px;
+    }
+}

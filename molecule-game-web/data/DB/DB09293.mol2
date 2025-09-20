@@ -1,0 +1,11 @@
+@<TRIPOS>MOLECULE
+DB09293
+    2     1     0     0     0
+SMALL
+USER_CHARGES
+
+@<TRIPOS>ATOM
+      1 I1         -1.3650    0.0000    0.0000 I         1 <0>        -0.4330
+      2 Na1         1.3650    0.0000    0.0000 Na        1 <0>         0.4330
+@<TRIPOS>BOND
+     1    1    2 1
