@@ -10,9 +10,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('Inicializando visualizadores 3Dmol.js...');
             try {
                 // Configurar para usar estilo stick en todas las visualizaciones
+                // y asegurarnos de que no hay rotación automática
                 $3Dmol.defaultConfig = {
                     backgroundColor: 'white',
-                    style: 'stick'
+                    style: 'stick',
+                    spin: false // Desactivar cualquier rotación automática
                 };
                 
                 // Inicializar los visualizadores 3Dmol.js automáticamente
@@ -32,8 +34,85 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
                 };
                 
-                // Ajustar tamaños al inicializar
-                setTimeout(adjustMoleculeSizes, 500);
+                // Configurar rotación manual para las moléculas
+                const setupManualRotation = () => {
+                    if (typeof $3Dmol !== 'undefined' && typeof $3Dmol.viewers !== 'undefined') {
+                        // Añadir rotación manual con mouse/touch para todos los visualizadores
+                        Object.keys($3Dmol.viewers).forEach(viewerId => {
+                            const viewer = $3Dmol.viewers[viewerId];
+                            const viewerElement = document.getElementById(viewerId);
+                            
+                            if (viewer && viewerElement) {
+                                let isDragging = false;
+                                let previousX, previousY;
+                                
+                                // Eventos de mouse
+                                viewerElement.addEventListener('mousedown', (e) => {
+                                    isDragging = true;
+                                    previousX = e.clientX;
+                                    previousY = e.clientY;
+                                    e.preventDefault();
+                                });
+                                
+                                document.addEventListener('mousemove', (e) => {
+                                    if (isDragging) {
+                                        const deltaX = e.clientX - previousX;
+                                        const deltaY = e.clientY - previousY;
+                                        
+                                        viewer.rotate(deltaY / 5, 'x');
+                                        viewer.rotate(deltaX / 5, 'y');
+                                        viewer.render();
+                                        
+                                        previousX = e.clientX;
+                                        previousY = e.clientY;
+                                        e.preventDefault();
+                                    }
+                                });
+                                
+                                document.addEventListener('mouseup', () => {
+                                    isDragging = false;
+                                });
+                                
+                                // Eventos táctiles para dispositivos móviles
+                                viewerElement.addEventListener('touchstart', (e) => {
+                                    if (e.touches.length === 1) {
+                                        isDragging = true;
+                                        previousX = e.touches[0].clientX;
+                                        previousY = e.touches[0].clientY;
+                                        e.preventDefault();
+                                    }
+                                });
+                                
+                                document.addEventListener('touchmove', (e) => {
+                                    if (isDragging && e.touches.length === 1) {
+                                        const deltaX = e.touches[0].clientX - previousX;
+                                        const deltaY = e.touches[0].clientY - previousY;
+                                        
+                                        viewer.rotate(deltaY / 5, 'x');
+                                        viewer.rotate(deltaX / 5, 'y');
+                                        viewer.render();
+                                        
+                                        previousX = e.touches[0].clientX;
+                                        previousY = e.touches[0].clientY;
+                                        e.preventDefault();
+                                    }
+                                });
+                                
+                                document.addEventListener('touchend', () => {
+                                    isDragging = false;
+                                });
+                                
+                                console.log(`Rotación manual configurada para ${viewerId}`);
+                            }
+                        });
+                    }
+                };
+                
+                // Ajustar tamaños y configurar rotación manual después de inicializar
+                setTimeout(() => {
+                    adjustMoleculeSizes();
+                    setupManualRotation();
+                }, 1000);
                 
                 // Ajustar tamaños cuando cambie el tamaño de la ventana
                 window.addEventListener('resize', adjustMoleculeSizes);

@@ -763,6 +763,29 @@ body {
     border-radius: 4px;
 }
 
+/* Indicador para rotación de moléculas */
+.viewer_3Dmoljs::after {
+    content: "↻ Haz clic y arrastra para girar";
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: var(--font-tiny);
+    color: var(--blue);
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 2px 0;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 10;
+    animation: fadeInOut 3s infinite;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.4; }
+}
+
 /* Estilos específicos para visualizadores 3Dmol.js */
 .viewer_3Dmoljs {
     position: relative;

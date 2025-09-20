@@ -263,12 +263,35 @@ class MoleculeGame {
             // Para el enfoque declarativo de 3Dmol.js, configuramos el atributo data-href
             // para cada contenedor de molécula y dejamos que 3Dmol.js haga el resto
             
+            // Generar semillas para rotaciones aleatorias pero consistentes
+            const baseSeed = Date.now();
+            const getRotationParams = (index) => {
+                // Usar una semilla diferente para cada molécula pero consistente en la misma sesión
+                const seed = baseSeed + (index * 1000);
+                const random = () => {
+                    const x = Math.sin(seed + index++) * 10000;
+                    return x - Math.floor(x);
+                };
+                
+                // Generar valores aleatorios para rotación
+                const axes = ['x', 'y', 'z'];
+                const axis = axes[Math.floor(random() * 3)];  // Eje aleatorio
+                const speed = 0;  // Sin rotación continua
+                const rotationX = Math.floor(random() * 360);  // Rotación inicial en X
+                const rotationY = Math.floor(random() * 360);  // Rotación inicial en Y
+                const rotationZ = Math.floor(random() * 360);  // Rotación inicial en Z
+                
+                return { axis, speed, rotationX, rotationY, rotationZ };
+            };
+            
             // Crear visualizador para la molécula objetivo
             const targetElement = document.getElementById('target-molecule');
             targetElement.setAttribute('data-href', this.currentMolecule);
             targetElement.setAttribute('data-style', 'stick');
             
-            // Crear visualizadores para las opciones
+            // No aplicamos atributos de rotación, las rotaciones se aplicarán después mediante el API
+            
+            // Crear visualizadores para las opciones (sin rotación animada)
             for (let i = 0; i < this.options.length; i++) {
                 const optionElement = document.getElementById(`option-${i}`);
                 optionElement.setAttribute('data-href', this.options[i]);
@@ -297,7 +320,9 @@ class MoleculeGame {
                 $3Dmol.autoload();
                 
                 // Después de cargar, asegurarnos que las moléculas no oculten los botones
+                // y aplicar rotaciones aleatorias iniciales
                 setTimeout(() => {
+                    // Ajustar tamaños
                     const options = document.querySelectorAll('.molecule-option');
                     options.forEach(option => {
                         // Asegurarse de que el ancho esté dentro de los límites
@@ -309,7 +334,56 @@ class MoleculeGame {
                             option.style.maxWidth = '75%';
                         }
                     });
-                }, 500);
+                    
+                    // Aplicar rotaciones iniciales fijas mediante el API de 3Dmol
+                    if (typeof $3Dmol !== 'undefined' && typeof $3Dmol.viewers !== 'undefined') {
+                        // Generar una semilla base para que las rotaciones sean predecibles pero diferentes para cada nivel
+                        const baseSeed = Date.now();
+                        
+                        // Función para generar un número pseudoaleatorio basado en una semilla
+                        const seededRandom = (seed) => {
+                            const x = Math.sin(seed) * 10000;
+                            return x - Math.floor(x);
+                        };
+                        
+                        // Identificar el visualizador de la molécula objetivo y la opción correcta
+                        const viewerIds = Object.keys($3Dmol.viewers);
+                        const targetViewerId = viewerIds.find(id => id.includes('target-molecule'));
+                        const correctOptionId = viewerIds.find(id => id.includes(`option-${this.correctOption}`));
+                        
+                        // Aplicar rotaciones iniciales diferentes a cada visualizador
+                        Object.keys($3Dmol.viewers).forEach((viewerId, index) => {
+                            const viewer = $3Dmol.viewers[viewerId];
+                            if (viewer) {
+                                // Generar un seed base diferente para cada visualizador
+                                let seed = baseSeed + (index * 1000);
+                                
+                                // Asegurar que la molécula objetivo y la opción correcta tengan rotaciones diferentes
+                                // Si este es el visualizador de la opción correcta, modificar la semilla significativamente
+                                if (viewerId === correctOptionId) {
+                                    seed = baseSeed + 50000 + (index * 1000);
+                                }
+                                
+                                const rotX = seededRandom(seed) * 360;
+                                const rotY = seededRandom(seed + 1) * 360;
+                                const rotZ = seededRandom(seed + 2) * 360;
+                                
+                                // Crear una matriz de rotación completa en lugar de aplicar rotaciones secuenciales
+                                // Esto hace que la rotación sea inmediata
+                                viewer.setView(new $3Dmol.View(viewer), true);
+                                viewer.rotate(rotX, 'x', false);
+                                viewer.rotate(rotY, 'y', false);
+                                viewer.rotate(rotZ, 'z', false);
+                                viewer.render();
+                                
+                                // Asegurarnos de que no hay animación de rotación continua
+                                viewer.spin(false);
+                                
+                                console.log(`Rotación inicial fija aplicada al visor ${viewerId}: X=${rotX.toFixed(2)}°, Y=${rotY.toFixed(2)}°, Z=${rotZ.toFixed(2)}°`);
+                            }
+                        });
+                    }
+                }, 800);
             } else {
                 console.error('3Dmol.js no está disponible');
                 // Caer en el método anterior si 3Dmol.js no está disponible
