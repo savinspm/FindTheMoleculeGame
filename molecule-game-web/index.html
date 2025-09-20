@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <!-- Biblioteca 3Dmol.js para visualización de moléculas 3D -->
     <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <script src="https://3Dmol.org/build/3Dmol.ui-min.js"></script>
     <!-- Hoja de estilos CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -52,12 +53,12 @@
                 <div class="game-grid-2x2">
                     <div class="grid-cell query-cell">
                         <h2>Encuentra: <span id="target-molecule-name"></span></h2>
-                        <div id="target-molecule" class="molecule-container query-molecule"></div>
+                        <div id="target-molecule" class="molecule-container query-molecule viewer_3Dmoljs" data-style="stick" data-backgroundcolor="0xffffff"></div>
                         <div id="feedback-message"></div>
                     </div>
                     <div class="grid-cell option-cell option-right">
                         <div class="molecule-choice">
-                            <div id="option-0" class="molecule-option"></div>
+                            <div id="option-0" class="molecule-option viewer_3Dmoljs" data-style="stick" data-backgroundcolor="0xffffff"></div>
                             <div class="button-container">
                                 <button class="select-button right-button" id="select-0">✓</button>
                             </div>
@@ -68,12 +69,12 @@
                             <div class="button-container">
                                 <button class="select-button left-button" id="select-1">✓</button>
                             </div>
-                            <div id="option-1" class="molecule-option"></div>
+                            <div id="option-1" class="molecule-option viewer_3Dmoljs" data-style="stick" data-backgroundcolor="0xffffff"></div>
                         </div>
                     </div>
                     <div class="grid-cell option-cell option-right">
                         <div class="molecule-choice">
-                            <div id="option-2" class="molecule-option"></div>
+                            <div id="option-2" class="molecule-option viewer_3Dmoljs" data-style="stick" data-backgroundcolor="0xffffff"></div>
                             <div class="button-container">
                                 <button class="select-button right-button" id="select-2">✓</button>
                             </div>

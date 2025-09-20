@@ -470,11 +470,13 @@ body {
 .molecule-choice {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Ensure proper spacing between elements */
+    justify-content: space-between; /* Asegurar espacio adecuado entre elementos */
     width: 100%;
     height: 100%;
     position: relative;
-    padding: 0 10px; /* Add padding to prevent overlapping */
+    padding: 0 20px; /* Aumentar el padding para evitar solapamientos */
+    box-sizing: border-box;
+    overflow: visible !important; /* Asegurar que los botones sean visibles incluso fuera del contenedor */
 }
 
 .option-right .molecule-choice {
@@ -490,7 +492,7 @@ body {
     box-shadow: 0 4px 16px var(--yellow);
 }
 .molecule-option {
-    width: 80%; /* Reduced from fixed width to percentage */
+    width: 75%; /* Reduced from fixed width to percentage */
     height: 80%; /* Reduced from fixed height to percentage */
     background-color: var(--white);
     border: 6px solid var(--purple);
@@ -498,6 +500,8 @@ body {
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     transition: transform 0.2s, box-shadow 0.2s;
     flex: 0 0 auto; /* Prevent flex item from growing/shrinking */
+    position: relative;
+    overflow: visible !important; /* Asegurar que el botón no se recorte */
 }
 .molecule-option:hover {
     transform: scale(1.06);
@@ -526,9 +530,9 @@ body {
 }
 @media (max-width: 576px) {
     .molecule-option {
-        width: 75%;
-        height: 75%;
-        max-width: 180px;
+        width: 70% !important;
+        height: 70% !important;
+        max-width: 180px !important;
     }
     .select-button {
         font-size: 0.8rem;
@@ -551,6 +555,11 @@ body {
     .left-button, .right-button {
         margin: 0;
     }
+    .molecule-container.viewer_3Dmoljs, 
+    .molecule-option.viewer_3Dmoljs {
+        width: 70% !important;
+        max-width: 70% !important;
+    }
 }
 /* --- FIN OPCIONES GRANDES Y VISUALES --- */
 
@@ -559,12 +568,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 15%; /* Allocate space for the button */
+    width: 20%; /* Aumentar el espacio asignado para el botón */
     position: relative;
+    min-width: 50px; /* Garantizar un ancho mínimo */
 }
 
 .select-button {
-    font-size: 1rem;
+    font-size: 1.1rem;
     padding: 0;
     border-radius: 50%;
     font-weight: bold;
@@ -574,16 +584,17 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    z-index: 30; /* Aumentar el z-index para asegurar visibilidad */
 }
 
 .left-button {
-    margin-right: 10px;
+    margin-right: 15px;
     transform-origin: right center;
     position: relative;
     z-index: 20; /* Ensure button stays above molecule */
@@ -591,7 +602,7 @@ body {
 }
 
 .right-button {
-    margin-left: 10px;
+    margin-left: 15px;
     transform-origin: left center;
     position: relative;
     z-index: 20; /* Ensure button stays above molecule */
@@ -750,6 +761,29 @@ body {
     padding: 3px 0;
     z-index: 10;
     border-radius: 4px;
+}
+
+/* Estilos específicos para visualizadores 3Dmol.js */
+.viewer_3Dmoljs {
+    position: relative;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.viewer_3Dmoljs canvas {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 18px;
+}
+
+/* Asegurar que los contenedores de moléculas mantienen su tamaño */
+.molecule-container.viewer_3Dmoljs, 
+.molecule-option.viewer_3Dmoljs {
+    min-height: 200px;
+    width: 80% !important; /* Reducir ancho para dejar espacio para los botones */
+    max-width: 80% !important;
 }
 
 /* Responsive */

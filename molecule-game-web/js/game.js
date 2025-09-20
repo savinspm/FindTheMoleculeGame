@@ -260,15 +260,80 @@ class MoleculeGame {
      */
     async createMoleculeViewers() {
         try {
+            // Para el enfoque declarativo de 3Dmol.js, configuramos el atributo data-href
+            // para cada contenedor de molécula y dejamos que 3Dmol.js haga el resto
+            
             // Crear visualizador para la molécula objetivo
-            await this.moleculeViewer.createViewer('target-molecule', this.currentMolecule);
+            const targetElement = document.getElementById('target-molecule');
+            targetElement.setAttribute('data-href', this.currentMolecule);
+            targetElement.setAttribute('data-style', 'stick');
             
             // Crear visualizadores para las opciones
+            for (let i = 0; i < this.options.length; i++) {
+                const optionElement = document.getElementById(`option-${i}`);
+                optionElement.setAttribute('data-href', this.options[i]);
+                optionElement.setAttribute('data-style', 'stick');
+                
+                // Asegurarse de que el contenedor de opción y el botón estén visibles
+                const buttonContainer = document.querySelector(`#select-${i}`).parentNode;
+                if (buttonContainer) {
+                    buttonContainer.style.display = 'flex';
+                    buttonContainer.style.visibility = 'visible';
+                }
+            }
+            
+            // Inicializar o reinicializar los visualizadores 3Dmol.js
+            if (typeof $3Dmol !== 'undefined' && typeof $3Dmol.viewers !== 'undefined') {
+                // Limpiar los visualizadores existentes
+                Object.keys($3Dmol.viewers).forEach(key => {
+                    $3Dmol.viewers[key].clear();
+                    delete $3Dmol.viewers[key];
+                });
+            }
+            
+            // Inicializar todos los visualizadores en la página
+            // Este código asume que 3Dmol.ui-min.js está cargado
+            if (typeof $3Dmol !== 'undefined') {
+                $3Dmol.autoload();
+                
+                // Después de cargar, asegurarnos que las moléculas no oculten los botones
+                setTimeout(() => {
+                    const options = document.querySelectorAll('.molecule-option');
+                    options.forEach(option => {
+                        // Asegurarse de que el ancho esté dentro de los límites
+                        if (window.innerWidth <= 576) {
+                            option.style.width = '70%';
+                            option.style.maxWidth = '70%';
+                        } else {
+                            option.style.width = '75%';
+                            option.style.maxWidth = '75%';
+                        }
+                    });
+                }, 500);
+            } else {
+                console.error('3Dmol.js no está disponible');
+                // Caer en el método anterior si 3Dmol.js no está disponible
+                await this.fallbackCreateViewers();
+            }
+        } catch (error) {
+            console.error('Error al crear visualizadores:', error);
+            throw error;
+        }
+    }
+    
+    /**
+     * Método de respaldo para crear visualizadores cuando 3Dmol.js no está disponible
+     */
+    async fallbackCreateViewers() {
+        try {
+            // Usar el método anterior como respaldo
+            await this.moleculeViewer.createViewer('target-molecule', this.currentMolecule);
+            
             for (let i = 0; i < this.options.length; i++) {
                 await this.moleculeViewer.createViewer(`option-${i}`, this.options[i], true);
             }
         } catch (error) {
-            console.error('Error al crear visualizadores:', error);
+            console.error('Error en fallbackCreateViewers:', error);
             throw error;
         }
     }
