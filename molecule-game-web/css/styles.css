@@ -668,6 +668,28 @@ body {
     padding: 20px;
     overflow-y: auto;
     box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    /* Improved scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple) var(--background);
+}
+
+/* Webkit scrollbar styling for better appearance */
+.welcome-ranking .ranking-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.welcome-ranking .ranking-sidebar::-webkit-scrollbar-track {
+    background: var(--background);
+    border-radius: 4px;
+}
+
+.welcome-ranking .ranking-sidebar::-webkit-scrollbar-thumb {
+    background: var(--purple);
+    border-radius: 4px;
+}
+
+.welcome-ranking .ranking-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--blue);
 }
 
 .welcome-ranking .ranking-sidebar h2 {
@@ -683,6 +705,9 @@ body {
     margin-bottom: 8px;
     border-radius: 10px;
     border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .welcome-ranking .ranking-item:nth-child(even) {
@@ -691,6 +716,18 @@ body {
 
 .welcome-ranking .ranking-item:nth-child(odd) {
     background-color: var(--pink);
+}
+
+.welcome-ranking .ranking-position {
+    font-weight: bold;
+    font-size: var(--font-small);
+    color: var(--purple);
+    min-width: 30px;
+    text-align: center;
+}
+
+.welcome-ranking .player-info {
+    flex: 1;
 }
 
 .welcome-ranking .player-name {
@@ -703,6 +740,17 @@ body {
 .welcome-ranking .player-stats {
     font-size: var(--font-small);
     color: var(--black);
+}
+
+.welcome-ranking .scroll-indicator {
+    text-align: center;
+    color: var(--purple);
+    font-size: calc(var(--font-small) * 0.9);
+    font-style: italic;
+    padding: 10px;
+    margin-top: 10px;
+    border-top: 1px solid var(--background);
+    opacity: 0.8;
 }
 
 .welcome-ranking .no-rankings {

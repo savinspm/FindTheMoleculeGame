@@ -97,7 +97,7 @@ class Ranking {
      * @param {number} limit - Número máximo de rankings a devolver
      * @returns {Array} - Lista de los mejores rankings
      */
-    getTopRankings(limit = 5) {
+    getTopRankings(limit = 10) {
         const rankings = this.loadRankings();
         return rankings.slice(0, limit);
     }
@@ -107,7 +107,7 @@ class Ranking {
      * @param {string} containerId - ID del elemento contenedor
      * @param {number} limit - Número máximo de rankings a mostrar
      */
-    updateRankingsDisplay(containerId, limit = 5) {
+    updateRankingsDisplay(containerId, limit = 10) {
         const container = document.getElementById(containerId);
         if (!container) {
             console.error(`Contenedor de rankings ${containerId} no encontrado`);
@@ -129,9 +129,18 @@ class Ranking {
         }
         
         // Crear elementos para cada ranking
-        rankings.forEach(ranking => {
+        rankings.forEach((ranking, index) => {
             const rankingItem = document.createElement('div');
             rankingItem.className = 'ranking-item';
+            
+            // Add ranking position number
+            const positionElement = document.createElement('div');
+            positionElement.className = 'ranking-position';
+            positionElement.textContent = `#${index + 1}`;
+            
+            // Create player info container
+            const playerInfoElement = document.createElement('div');
+            playerInfoElement.className = 'player-info';
             
             const nameElement = document.createElement('div');
             nameElement.className = 'player-name';
@@ -141,10 +150,22 @@ class Ranking {
             statsElement.className = 'player-stats';
             statsElement.textContent = `${ranking.accuracy.toFixed(1)}% (${ranking.score}/${ranking.attempts})`;
             
-            rankingItem.appendChild(nameElement);
-            rankingItem.appendChild(statsElement);
+            playerInfoElement.appendChild(nameElement);
+            playerInfoElement.appendChild(statsElement);
+            
+            rankingItem.appendChild(positionElement);
+            rankingItem.appendChild(playerInfoElement);
             container.appendChild(rankingItem);
         });
+        
+        // Add scroll indicator if there are more rankings available
+        const allRankings = this.loadRankings();
+        if (allRankings.length > limit) {
+            const scrollIndicator = document.createElement('div');
+            scrollIndicator.className = 'scroll-indicator';
+            scrollIndicator.textContent = `Mostrando top ${limit} de ${allRankings.length} jugadores`;
+            container.appendChild(scrollIndicator);
+        }
     }
 }
 

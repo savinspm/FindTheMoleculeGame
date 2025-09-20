@@ -97,7 +97,7 @@ class MoleculeGame {
             console.log(`Se cargaron ${this.moleculeFiles.length} archivos de moléculas.`);
             
             // Actualizar rankings
-            this.ranking.updateRankingsDisplay('rankings-container');
+            this.ranking.updateRankingsDisplay('rankings-container', 10);
             
             return true;
         } catch (error) {
@@ -531,7 +531,7 @@ class MoleculeGame {
         this.showScreen('gameOver');
         
         // Actualizar rankings
-        this.ranking.updateRankingsDisplay('rankings-container');
+        this.ranking.updateRankingsDisplay('rankings-container', 10);
     }
     
     /**
@@ -570,7 +570,7 @@ class MoleculeGame {
         this.showScreen('welcome');
         
         // Actualizar rankings
-        this.ranking.updateRankingsDisplay('rankings-container');
+        this.ranking.updateRankingsDisplay('rankings-container', 10);
     }
     
     /**
