@@ -1,26 +1,58 @@
 /**
- * Script principal que inicializa el juego
+ * Main script that initializes the game
  */
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        console.log('Inicializando juego "Encuentra la Molécula"...');
+        // Initialize language system first
+        console.log('Initializing language system...');
+        window.language = new Language();
         
-        // Inicializar 3Dmol.js si está disponible
+        // Set up language buttons
+        const langEnBtn = document.getElementById('lang-en');
+        const langEsBtn = document.getElementById('lang-es');
+        
+        if (langEnBtn && langEsBtn) {
+            langEnBtn.addEventListener('click', () => {
+                window.language.setLanguage('en');
+                updateLanguageButtons();
+            });
+            
+            langEsBtn.addEventListener('click', () => {
+                window.language.setLanguage('es');
+                updateLanguageButtons();
+            });
+        }
+        
+        function updateLanguageButtons() {
+            const currentLang = window.language.getCurrentLanguage();
+            if (langEnBtn && langEsBtn) {
+                langEnBtn.classList.toggle('active', currentLang === 'en');
+                langEsBtn.classList.toggle('active', currentLang === 'es');
+            }
+        }
+        
+        // Initialize UI with current language
+        window.language.updateUI();
+        updateLanguageButtons();
+        
+        console.log('Initializing "Find the Molecule" game...');
+        
+        // Initialize 3Dmol.js if available
         if (typeof $3Dmol !== 'undefined') {
-            console.log('Inicializando visualizadores 3Dmol.js...');
+            console.log('Initializing 3Dmol.js viewers...');
             try {
-                // Configurar para usar estilo stick en todas las visualizaciones
-                // y asegurarnos de que no hay rotación automática
+                // Configure to use stick style in all visualizations
+                // and ensure there's no automatic rotation
                 $3Dmol.defaultConfig = {
                     backgroundColor: 'white',
                     style: 'stick',
-                    spin: false // Desactivar cualquier rotación automática
+                    spin: false // Disable any automatic rotation
                 };
                 
-                // Inicializar los visualizadores 3Dmol.js automáticamente
+                // Initialize 3Dmol.js viewers automatically
                 $3Dmol.autoload();
                 
-                // Función para ajustar tamaños
+                // Function to adjust sizes
                 const adjustMoleculeSizes = () => {
                     const options = document.querySelectorAll('.molecule-option');
                     options.forEach(option => {
@@ -34,10 +66,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
                 };
                 
-                // Configurar rotación manual para las moléculas
+                // Configure manual rotation for molecules
                 const setupManualRotation = () => {
                     if (typeof $3Dmol !== 'undefined' && typeof $3Dmol.viewers !== 'undefined') {
-                        // Añadir rotación manual con mouse/touch para todos los visualizadores
+                        // Add manual rotation with mouse/touch for all viewers
                         Object.keys($3Dmol.viewers).forEach(viewerId => {
                             const viewer = $3Dmol.viewers[viewerId];
                             const viewerElement = document.getElementById(viewerId);
@@ -46,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 let isDragging = false;
                                 let previousX, previousY;
                                 
-                                // Eventos de mouse
+                                // Mouse events
                                 viewerElement.addEventListener('mousedown', (e) => {
                                     isDragging = true;
                                     previousX = e.clientX;
@@ -73,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     isDragging = false;
                                 });
                                 
-                                // Eventos táctiles para dispositivos móviles
+                                // Touch events for mobile devices
                                 viewerElement.addEventListener('touchstart', (e) => {
                                     if (e.touches.length === 1) {
                                         isDragging = true;
@@ -102,40 +134,47 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     isDragging = false;
                                 });
                                 
-                                console.log(`Rotación manual configurada para ${viewerId}`);
+                                console.log(`Manual rotation configured for ${viewerId}`);
                             }
                         });
                     }
                 };
                 
-                // Ajustar tamaños y configurar rotación manual después de inicializar
+                // Adjust sizes and configure manual rotation after initialization
                 setTimeout(() => {
                     adjustMoleculeSizes();
                     setupManualRotation();
                 }, 1000);
                 
-                // Ajustar tamaños cuando cambie el tamaño de la ventana
+                // Adjust sizes when window size changes
                 window.addEventListener('resize', adjustMoleculeSizes);
             } catch (e) {
-                console.warn('Error inicializando 3Dmol.js:', e);
+                console.warn('Error initializing 3Dmol.js:', e);
             }
         }
         
-        // Crear instancia del juego
+        // Create game instance and make it globally available
         const game = new MoleculeGame();
+        window.game = game; // Make available for language system
         
-        // Inicializar juego (cargar moléculas)
+        // Initialize game (load molecules)
         const initialized = await game.initialize();
         
         if (!initialized) {
-            console.error('Error: El juego no pudo inicializarse correctamente.');
+            console.error('Error: The game could not be initialized correctly.');
         } else {
-            console.log('Juego inicializado con éxito. ¡Listo para jugar!');
+            console.log('Game initialized successfully. Ready to play!');
         }
     } catch (error) {
-        console.error('Error durante la inicialización del juego:', error);
+        console.error('Error during game initialization:', error);
         
-        // Mostrar mensaje de error al usuario
+        // Show error message to user with language support
+        const lang = window.language;
+        const errorTitle = lang ? lang.getText('error.loadGameTitle') : 'Error loading game';
+        const errorDescription = lang ? lang.getText('error.loadGameDescription') : 'An unknown error occurred.';
+        const reloadText = lang ? lang.getText('error.reloadText') : 'Please reload the page or try again later.';
+        const reloadButton = lang ? lang.getText('error.reloadButton') : 'Reload';
+        
         const errorMessage = document.createElement('div');
         errorMessage.style.cssText = `
             position: fixed;
@@ -152,9 +191,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             max-width: 80%;
         `;
         errorMessage.innerHTML = `
-            <h2>Error al cargar el juego</h2>
-            <p>${error.message || 'Ocurrió un error desconocido.'}</p>
-            <p>Por favor, recarga la página o inténtalo más tarde.</p>
+            <h2>${errorTitle}</h2>
+            <p>${error.message || errorDescription}</p>
+            <p>${reloadText}</p>
             <button onclick="location.reload()" style="
                 margin-top: 10px;
                 padding: 8px 16px;
@@ -163,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 border-radius: 5px;
                 cursor: pointer;
                 font-weight: bold;
-            ">Recargar</button>
+            ">${reloadButton}</button>
         `;
         document.body.appendChild(errorMessage);
     }

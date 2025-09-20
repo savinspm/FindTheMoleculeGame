@@ -1,11 +1,11 @@
 /**
- * Clase PseudoRandom - Genera números pseudoaleatorios con una semilla
- * para asegurar consistencia entre ejecuciones con la misma semilla
+ * PseudoRandom Class - Generates pseudorandom numbers with a seed
+ * to ensure consistency between executions with the same seed
  */
 class PseudoRandom {
     /**
      * Constructor
-     * @param {number} seed - Semilla para el generador
+     * @param {number} seed - Seed for the generator
      */
     constructor(seed) {
         this.seed = seed || 1;
@@ -13,38 +13,38 @@ class PseudoRandom {
     }
     
     /**
-     * Genera un número pseudoaleatorio entre 0 y 1
-     * @returns {number} - Número pseudoaleatorio
+     * Generates a pseudorandom number between 0 and 1
+     * @returns {number} - Pseudorandom number
      */
     random() {
-        // Algoritmo Linear Congruential Generator (LCG) mejorado
-        // Usando constantes que proporcionan mejor distribución
+        // Improved Linear Congruential Generator (LCG) algorithm
+        // Using constants that provide better distribution
         this.seed = (this.seed * 1664525 + 1013904223) % 4294967296;
         return this.seed / 4294967296;
     }
     
     /**
-     * Reinicia el generador con la semilla original
+     * Resets the generator with the original seed
      */
     reset() {
         this.seed = this.originalSeed;
     }
     
     /**
-     * Genera un número entero aleatorio en un rango
-     * @param {number} min - Valor mínimo (inclusive)
-     * @param {number} max - Valor máximo (exclusive)
-     * @returns {number} - Número entero aleatorio
+     * Generates a random integer in a range
+     * @param {number} min - Minimum value (inclusive)
+     * @param {number} max - Maximum value (exclusive)
+     * @returns {number} - Random integer
      */
     randomInt(min, max) {
         return Math.floor(this.random() * (max - min)) + min;
     }
     
     /**
-     * Genera un número decimal aleatorio en un rango
-     * @param {number} min - Valor mínimo
-     * @param {number} max - Valor máximo
-     * @returns {number} - Número decimal aleatorio
+     * Generates a random decimal in a range
+     * @param {number} min - Minimum value
+     * @param {number} max - Maximum value
+     * @returns {number} - Random decimal
      */
     randomFloat(min, max) {
         return this.random() * (max - min) + min;
@@ -52,188 +52,202 @@ class PseudoRandom {
 }
 
 /**
- * MoleculeViewer - Clase para manejar la visualización de moléculas 3D
- * Utiliza la biblioteca 3Dmol.js para renderizar moléculas
+ * MoleculeViewer - Class for handling 3D molecule visualization
+ * Uses the 3Dmol.js library to render molecules
  */
 class MoleculeViewer {
     /**
      * Constructor
      */
     constructor() {
-        // Caché para las moléculas ya cargadas
+        // Cache for already loaded molecules
         this.moleculesCache = {};
         
-        // Colores para los átomos
+        // Colors for atoms
         this.atomColors = {
-            'H': 0xF0F0F0, // Hidrógeno - casi blanco
-            'C': 0x808080, // Carbono - gris
-            'N': 0x0000FF, // Nitrógeno - azul
-            'O': 0xFF0000, // Oxígeno - rojo
-            'S': 0xFFFF00, // Azufre - amarillo
-            'P': 0xFF8000, // Fósforo - naranja
-            'F': 0x00FF00, // Flúor - verde
-            'Cl': 0x00C800, // Cloro - verde oscuro
-            'Br': 0xA52A2A, // Bromo - marrón
-            'I': 0x800080  // Yodo - púrpura
+            'H': 0xF0F0F0, // Hydrogen - almost white
+            'C': 0x808080, // Carbon - gray
+            'N': 0x0000FF, // Nitrogen - blue
+            'O': 0xFF0000, // Oxygen - red
+            'S': 0xFFFF00, // Sulfur - yellow
+            'P': 0xFF8000, // Phosphorus - orange
+            'F': 0x00FF00, // Fluorine - green
+            'Cl': 0x00C800, // Chlorine - dark green
+            'Br': 0xA52A2A, // Bromine - brown
+            'I': 0x800080  // Iodine - purple
         };
         
-        // Verificar si 3Dmol.js está disponible
+        // Check if 3Dmol.js is available
         this.is3DMolAvailable = typeof $3Dmol !== 'undefined';
         if (!this.is3DMolAvailable) {
-            console.warn('3Dmol.js no está disponible. Se utilizará visualización simplificada.');
+            const lang = window.language;
+            const message = lang ? lang.getText('console.fallbackMolecule') : '3Dmol.js not available. Using simplified visualization.';
+            console.warn(message);
         }
     }
     
     /**
-     * Extrae el nombre base del archivo de molécula
-     * @param {string} moleculePath - Ruta al archivo de la molécula
-     * @returns {string} - Nombre de la molécula sin la extensión
+     * Extracts the base name of the molecule file
+     * @param {string} moleculePath - Path to the molecule file
+     * @returns {string} - Molecule name without the extension
      */
     getMoleculeName(moleculePath) {
-        // Obtener solo el nombre base del archivo sin la extensión
+        // Get only the base filename without the extension
         const parts = moleculePath.split('/');
         const fileName = parts[parts.length - 1];
         return fileName.replace('.mol2', '');
     }
     
     /**
-     * Crea un visor de moléculas en el contenedor especificado
-     * @param {string} containerId - ID del contenedor para el visor
-     * @param {string} moleculePath - Ruta al archivo de la molécula a cargar
-     * @param {boolean} isOption - Indica si es una opción seleccionable
-     * @returns {Promise<Object>} - Promesa que resuelve con el visor configurado
+     * Creates a molecule viewer in the specified container
+     * @param {string} containerId - ID of the container for the viewer
+     * @param {string} moleculePath - Path to the molecule file to load
+     * @param {boolean} isOption - Indicates if it's a selectable option
+     * @returns {Promise<Object>} - Promise that resolves with the configured viewer
      */
     async createViewer(containerId, moleculePath, isOption = false) {
         try {
             const container = document.getElementById(containerId);
             if (!container) {
-                console.error(`Contenedor ${containerId} no encontrado`);
+                const lang = window.language;
+                const message = lang ? lang.getText('console.containerNotFound') : 'Container not found';
+                console.error(`${message} ${containerId}`);
                 return null;
             }
             
-            // Limpiar el contenedor
+            // Clear the container
             container.innerHTML = '';
             
-            // Obtener el nombre de la molécula (solo para uso interno, ya no lo mostraremos)
+            // Get the molecule name (for internal use only, we won't display it)
             const moleculeName = this.getMoleculeName(moleculePath);
             
-            // Crear elemento para la visualización 3D
+            // Create element for 3D visualization
             const viewerElement = document.createElement('div');
             viewerElement.style.width = '100%';
             viewerElement.style.height = '100%';
             viewerElement.style.position = 'relative';
+            viewerElement.className = 'viewer_3Dmoljs';
+            
+            // Set the rotate hint as a data attribute for CSS
+            const lang = window.language;
+            const rotateHint = lang ? lang.getText('rotateHint') : '↻ Click and drag to rotate';
+            viewerElement.setAttribute('data-rotate-hint', rotateHint);
+            
             container.appendChild(viewerElement);
             
-            // Crear elemento de sugerencia para rotar dentro del visor
-            const rotateHint = document.createElement('div');
-            rotateHint.className = 'molecule-rotate-hint';
-            rotateHint.textContent = 'Haz clic para rotar';
-            viewerElement.appendChild(rotateHint);
-            
-            // Si 3Dmol.js no está disponible, mostrar una visualización simplificada
+            // If 3Dmol.js is not available, show a simplified visualization
             if (!this.is3DMolAvailable) {
                 return this.createSimplifiedView(viewerElement, moleculeName);
             }
             
             try {
-                // Cargar la molécula si aún no está en caché
+                // Load the molecule if not already in cache
                 let moleculeData = this.moleculesCache[moleculePath];
                 if (!moleculeData) {
                     moleculeData = await this.loadMoleculeFile(moleculePath);
                     this.moleculesCache[moleculePath] = moleculeData;
                 }
                 
-                // Crear el visor 3D con configuración optimizada para evitar superposiciones
+                // Create the 3D viewer with optimized configuration to avoid overlaps
                 const config = { 
                     backgroundColor: 'white',
                     antialias: true,
-                    outline: true, // Agregar contorno para mejor visualización
-                    disableFog: true, // Desactivar niebla para mayor claridad
-                    maxDistance: -1, // Evita limitaciones de distancia
-                    cartoonQuality: 2, // Mejora la calidad de representación
-                    nearSurface: 0.5, // Mejora la visualización de superficies cercanas
-                    farSurface: 0.8 // Mejora la visualización de superficies lejanas
+                    outline: true, // Add outline for better visualization
+                    disableFog: true, // Disable fog for greater clarity
+                    maxDistance: -1, // Avoid distance limitations
+                    cartoonQuality: 2, // Improve rendering quality
+                    nearSurface: 0.5, // Improve near surface visualization
+                    farSurface: 0.8 // Improve far surface visualization
                 };
                 const viewer = $3Dmol.createViewer(viewerElement, config);
                 
-                // Añadir la molécula al visor
+                // Add the molecule to the viewer
                 const model = viewer.addModel(moleculeData, "mol2");
                 
-                // Hacer átomos clickables para mejorar interacción y mostrar info
+                // Make atoms clickable for better interaction and info display
                 model.setClickable({}, true, function(atom){ 
-                    console.log("Átomo:", atom.elem, atom.serial);
+                    const lang = window.language;
+                    const message = lang ? lang.getText('console.atomDetected') : 'Atom:';
+                    console.log(message, atom.elem, atom.serial);
                 });
                 
-                // Verificar si la molécula tiene enlaces múltiples (dobles o triples)
+                // Check if the molecule has multiple bonds (double or triple)
                 this.detectAndEnhanceMultipleBonds(model);
                 
-                // Aplicar un factor de separación a los átomos para evitar superposiciones
+                // Apply separation factor to atoms to avoid overlaps
                 model.setClickable({}, true, function(atom){ 
-                    console.log("Átomo:", atom.elem, atom.serial);
+                    const lang = window.language;
+                    const message = lang ? lang.getText('console.atomDetected') : 'Atom:';
+                    console.log(message, atom.elem, atom.serial);
                 });
                 
-                // Determinar si es una molécula compleja (más de 30 átomos)
+                // Determine if it's a complex molecule (more than 30 atoms)
                 const atomCount = model.selectedAtoms({}).length;
                 if (atomCount > 30) {
-                    // Para moléculas complejas aplicar ajustes adicionales manteniendo buena visualización
+                    // For complex molecules apply additional adjustments while maintaining good visualization
                     viewer.setStyle({}, { 
                         stick: { 
-                            radius: 0.12,     // Sticks algo más delgados pero visibles
-                            opacity: 0.85,    // Un poco más transparente para evitar saturación visual
-                            smoothness: 5     // Menos suavizado para mejor rendimiento
+                            radius: 0.12,     // Slightly thinner but visible sticks
+                            opacity: 0.85,    // Slightly more transparent to avoid visual saturation
+                            smoothness: 5     // Less smoothing for better performance
                         }
                     });
                     viewer.setStyle({elem: 'H'}, { 
                         sphere: { 
-                            radius: 0.15,     // Hidrógenos más pequeños
-                            opacity: 0.85     // Transparencia para mejorar visibilidad
+                            radius: 0.15,     // Smaller hydrogens
+                            opacity: 0.85     // Transparency to improve visibility
                         } 
                     });
-                    console.log(`Molécula compleja detectada (${atomCount} átomos). Aplicando ajustes adicionales.`);
+                    const lang = window.language;
+                    const complexMessage = lang ? lang.getText('console.complexMolecule') : 'Complex molecule detected';
+                    const atomsMessage = lang ? lang.getText('console.atomsApplyingAdjustments') : 'atoms. Applying additional adjustments.';
+                    console.log(`${complexMessage} (${atomCount} ${atomsMessage}`);
                 }
                 
-                // SISTEMA DE ROTACIÓN ALEATORIA
+                // RANDOM ROTATION SYSTEM
                 // ===============================
-                // Aplica rotaciones aleatorias a cada molécula para que todas tengan orientaciones diferentes
-                // Cada molécula tendrá la misma rotación inicial (determinística) pero será diferente de las otras
+                // Applies random rotations to each molecule so they all have different orientations
+                // Each molecule will have the same initial rotation (deterministic) but will be different from the others
                 
-                // Crear una semilla única basada en la ruta de la molécula y el contenedor
+                // Create a unique seed based on the molecule path and container
                 const moleculeHash = this.simpleHash(moleculePath);
                 const containerHash = this.simpleHash(containerId);
-                const combinedSeed = moleculeHash + containerHash * 777; // Factor primo para mejor distribución
+                const combinedSeed = moleculeHash + containerHash * 777; // Prime factor for better distribution
                 
-                // Crear generador pseudo-aleatorio determinista
+                // Create deterministic pseudo-random generator
                 const randomGen = new PseudoRandom(combinedSeed);
                 
-                // Generar rotaciones aleatorias para cada eje (0-360 grados)
+                // Generate random rotations for each axis (0-360 degrees)
                 const rotationX = randomGen.randomFloat(0, 360);
                 const rotationY = randomGen.randomFloat(0, 360); 
                 const rotationZ = randomGen.randomFloat(0, 360);
                 
-                // Aplicar las rotaciones antes de renderizar (similar al ejemplo proporcionado)
+                // Apply rotations before rendering (similar to the provided example)
                 viewer.rotate(rotationX, 'x');
                 viewer.rotate(rotationY, 'y'); 
                 viewer.rotate(rotationZ, 'z');
                 
-                console.log(`Rotación aplicada a ${containerId}: X=${rotationX.toFixed(1)}°, Y=${rotationY.toFixed(1)}°, Z=${rotationZ.toFixed(1)}°`);
+                const lang = window.language;
+                const rotationMessage = lang ? lang.getText('console.rotationApplied') : 'Rotation applied to';
+                console.log(`${rotationMessage} ${containerId}: X=${rotationX.toFixed(1)}°, Y=${rotationY.toFixed(1)}°, Z=${rotationZ.toFixed(1)}°`);
                 
-                // Configurar estilos de visualización mejorados para mejor visualización de átomos y enlaces
+                // Configure improved visualization styles for better atom and bond visualization
                 
-                // Aplicar visualización stick-and-ball para todos los átomos (estilo híbrido)
+                // Apply stick-and-ball visualization for all atoms (hybrid style)
                 viewer.setStyle({}, { 
                     stick: { 
-                        radius: 0.15, // Radio de los enlaces (sticks)
-                        opacity: 0.9, // Ligera transparencia para mejor visualización
-                        color: 'grey', // Color base para los enlaces
-                        smoothness: 10 // Mayor suavidad para los enlaces
+                        radius: 0.15, // Bond radius (sticks)
+                        opacity: 0.9, // Slight transparency for better visualization
+                        color: 'grey', // Base color for bonds
+                        smoothness: 10 // Greater smoothness for bonds
                     },
                     sphere: { 
-                        scale: 0.3, // Escala global para las esferas
-                        opacity: 0.9 // Ligera transparencia para mejor visualización
+                        scale: 0.3, // Global scale for spheres
+                        opacity: 0.9 // Slight transparency for better visualization
                     }
                 });
                 
-                // Configuración específica por tipo de átomo
+                // Specific configuration by atom type
                 viewer.setStyle({elem: 'C'}, { sphere: { color: this.atomColors['C'], radius: 0.35 } });
                 viewer.setStyle({elem: 'O'}, { sphere: { color: this.atomColors['O'], radius: 0.35 } });
                 viewer.setStyle({elem: 'N'}, { sphere: { color: this.atomColors['N'], radius: 0.35 } });
@@ -241,12 +255,12 @@ class MoleculeViewer {
                 viewer.setStyle({elem: 'P'}, { sphere: { color: this.atomColors['P'], radius: 0.4 } });
                 viewer.setStyle({elem: 'H'}, { sphere: { color: this.atomColors['H'], radius: 0.18 } });
                 
-                // Ajustar la vista con un factor de zoom más alto para una mejor visualización
+                // Adjust the view with a higher zoom factor for better visualization
                 viewer.zoomTo();
-                viewer.zoom(1.2); // Aumentar el zoom para que las moléculas se vean más grandes
+                viewer.zoom(1.2); // Increase zoom so molecules appear larger
                 viewer.render();
                 
-                // Habilitar la rotación con el ratón
+                // Enable mouse rotation
                 let isDragging = false;
                 let previousX, previousY;
                 
@@ -274,7 +288,7 @@ class MoleculeViewer {
                     isDragging = false;
                 });
                 
-                // Manejar eventos de rueda para zoom
+                // Handle wheel events for zoom
                 viewerElement.addEventListener('wheel', (e) => {
                     e.preventDefault();
                     const delta = e.deltaY > 0 ? -1 : 1;
@@ -290,59 +304,64 @@ class MoleculeViewer {
                 };
                 
             } catch (error) {
-                console.error(`Error al crear el visor para ${moleculePath}:`, error);
+                const lang = window.language;
+                const errorMessage = lang ? lang.getText('console.errorCreatingViewer') : 'Error creating viewer for';
+                console.error(`${errorMessage} ${moleculePath}:`, error);
                 return this.createSimplifiedView(viewerElement, moleculeName);
             }
         } catch (error) {
-            console.error(`Error general al crear el visor para ${moleculePath}:`, error);
+            const lang = window.language;
+            const errorMessage = lang ? lang.getText('console.errorCreatingViewer') : 'General error creating viewer for';
+            console.error(`${errorMessage} ${moleculePath}:`, error);
             return null;
         }
     }
     
     /**
-     * Crea una vista simplificada 2D cuando 3Dmol.js no está disponible
-     * @param {HTMLElement} container - Elemento contenedor
-     * @param {string} moleculePath - Ruta al archivo de la molécula
-     * @param {number} [seed] - Semilla para generación consistente
-     * @returns {Object} - Información de la vista simplificada
+     * Creates a simplified 2D view when 3Dmol.js is not available
+     * @param {HTMLElement} container - Container element
+     * @param {string} moleculePath - Path to the molecule file
+     * @param {number} [seed] - Seed for consistent generation
+     * @returns {Object} - Simplified view information
      */
     createSimplifiedView(container, moleculePath, seed = null) {
-        // Extraer el nombre de la molécula de la ruta
+        // Extract the molecule name from the path
         const moleculeName = this.getMoleculeName(moleculePath);
         
-        // Limpiar el contenedor
+        // Clear the container
         container.innerHTML = '';
         
-        // Crear un canvas para dibujar una representación simple
+        // Create a canvas to draw a simple representation
         const canvas = document.createElement('canvas');
         canvas.width = container.clientWidth;
         canvas.height = container.clientHeight;
         container.appendChild(canvas);
         
-        // Añadir el mensaje de rotación dentro del contenedor
+        // Add rotation message inside the container
         const rotateHint = document.createElement('div');
         rotateHint.className = 'molecule-rotate-hint';
-        rotateHint.textContent = 'Haz clic para rotar';
+        const language = window.language;
+        rotateHint.textContent = language ? language.getText('console.rotateHint') : 'Click to rotate';
         container.appendChild(rotateHint);
         
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Dibujar una representación molecular simbólica
+        // Draw a symbolic molecular representation
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         
-        // Dibujar algunos átomos conectados en forma de hexágono (benceno)
+        // Draw some connected atoms in hexagon form (benzene)
         const radius = Math.min(canvas.width, canvas.height) * 0.3;
         const atomRadius = radius * 0.15;
         
         ctx.lineWidth = 3;
         ctx.strokeStyle = '#666';
         
-        // Crear un patrón basado en el nombre de la molécula para que cada una sea distinta
+        // Create a pattern based on the molecule name so each one is distinct
         const hash = seed !== null ? seed : this.simpleHash(moleculeName);
-        const numAtoms = 4 + (hash % 4); // Entre 4 y 7 átomos
+        const numAtoms = 4 + (hash % 4); // Between 4 and 7 atoms
         
         const atoms = [];
         for (let i = 0; i < numAtoms; i++) {
@@ -354,7 +373,7 @@ class MoleculeViewer {
             });
         }
         
-        // Conectar los átomos con líneas
+        // Connect atoms with lines
         for (let i = 0; i < atoms.length; i++) {
             const atom1 = atoms[i];
             const atom2 = atoms[(i + 1) % atoms.length];
@@ -363,7 +382,7 @@ class MoleculeViewer {
             ctx.lineTo(atom2.x, atom2.y);
             ctx.stroke();
             
-            // Conexiones adicionales basadas en el hash
+            // Additional connections based on hash
             if ((hash + i) % 4 === 0 && atoms.length > 4) {
                 const atom3 = atoms[(i + 2) % atoms.length];
                 ctx.beginPath();
@@ -373,18 +392,18 @@ class MoleculeViewer {
             }
         }
         
-        // Dibujar los átomos
+        // Draw the atoms
         for (const atom of atoms) {
             ctx.beginPath();
             ctx.arc(atom.x, atom.y, atomRadius, 0, 2 * Math.PI);
             
-            // Obtener color del átomo
+            // Get atom color
             const atomColor = this.getAtomColor(atom.type);
             ctx.fillStyle = atomColor;
             ctx.fill();
             ctx.stroke();
             
-            // Agregar símbolo del átomo
+            // Add atom symbol
             ctx.fillStyle = '#000';
             ctx.font = '14px Arial';
             ctx.textAlign = 'center';
@@ -392,12 +411,14 @@ class MoleculeViewer {
             ctx.fillText(atom.type, atom.x, atom.y);
         }
         
-        // Agregar texto de vista simplificada
+        // Add simplified view text
         ctx.fillStyle = '#d00';
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('Vista simplificada', centerX, canvas.height - 5);
+        const language2 = window.language;
+        const simplifiedText = language2 ? language2.getText('console.simplifiedView') : 'Simplified view';
+        ctx.fillText(simplifiedText, centerX, canvas.height - 5);
         
         return {
             element: container,
@@ -407,9 +428,9 @@ class MoleculeViewer {
     }
     
     /**
-     * Genera un hash simple a partir de un string (mantenido para compatibilidad con createSimplifiedView)
-     * @param {string} str - String a convertir en hash
-     * @returns {number} - Hash numérico
+     * Generates a simple hash from a string (maintained for compatibility with createSimplifiedView)
+     * @param {string} str - String to convert to hash
+     * @returns {number} - Numeric hash
      */
     simpleHash(str) {
         let hash = 0;
@@ -417,36 +438,38 @@ class MoleculeViewer {
         for (let i = 0; i < str.length; i++) {
             const char = str.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convertir a entero de 32 bits
+            hash = hash & hash; // Convert to 32-bit integer
         }
         return Math.abs(hash);
     }
     
     /**
-     * Obtiene el color para un tipo de átomo
-     * @param {string} atomType - Símbolo del átomo
-     * @returns {string} - Color en formato CSS
+     * Gets the color for an atom type
+     * @param {string} atomType - Atom symbol
+     * @returns {string} - Color in CSS format
      */
     getAtomColor(atomType) {
-        // Convertir el color hexadecimal a formato CSS
+        // Convert the hexadecimal color to CSS format
         const hexColor = this.atomColors[atomType] || this.atomColors['C'];
         return '#' + hexColor.toString(16).padStart(6, '0');
     }
     
     /**
-     * Carga el archivo de la molécula
-     * @param {string} moleculePath - Ruta al archivo de la molécula
-     * @returns {Promise<string>} - Promesa que resuelve con el contenido del archivo
+     * Loads the molecule file
+     * @param {string} moleculePath - Path to the molecule file
+     * @returns {Promise<string>} - Promise that resolves with the file content
      */
     async loadMoleculeFile(moleculePath) {
         try {
-            // Asegurarnos de que la ruta esté correcta
+            // Ensure the path is correct
             let adjustedPath = moleculePath;
             if (!adjustedPath.startsWith('data/')) {
                 adjustedPath = 'data/' + adjustedPath;
             }
             
-            console.log(`Cargando molécula desde: ${adjustedPath}`);
+            const lang = window.language;
+            const loadingMsg = lang ? lang.getText('console.loadingMolecule') : 'Loading molecule from';
+            console.log(`${loadingMsg}: ${adjustedPath}`);
             
             const response = await fetch(adjustedPath);
             if (!response.ok) {
@@ -454,18 +477,20 @@ class MoleculeViewer {
             }
             return await response.text();
         } catch (error) {
-            console.error(`Error al cargar la molécula desde ${moleculePath}:`, error);
-            // Devolver una estructura molecular simple como respaldo
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('error.loadMolecule') : 'Error loading molecule from';
+            console.error(`${errorMsg} ${moleculePath}:`, error);
+            // Return a simple molecular structure as fallback
             return this.generateFallbackMolecule();
         }
     }
     
     /**
-     * Genera una estructura molecular simple como respaldo
-     * @returns {string} - Texto en formato mol2 para una molécula simple
+     * Generates a simple molecular structure as fallback
+     * @returns {string} - Text in mol2 format for a simple molecule
      */
     generateFallbackMolecule() {
-        // Crear una molécula simple (metano)
+        // Create a simple molecule (methane)
         return `@<TRIPOS>MOLECULE
 FALLBACK
 5 4
@@ -487,59 +512,65 @@ USER_CHARGES
     }
     
     /**
-     * Detecta y mejora la visualización de enlaces múltiples (dobles, triples)
-     * @param {Object} model - El modelo de la molécula
+     * Detects and enhances the visualization of multiple bonds (double, triple)
+     * @param {Object} model - The molecule model
      */
     detectAndEnhanceMultipleBonds(model) {
         try {
-            // Obtener todos los enlaces (bonds) del modelo
+            // Get all bonds from the model
             const bonds = model.getBonds();
             if (!bonds || bonds.length === 0) return;
             
-            // Verificar y mejorar la visualización de enlaces múltiples
+            const lang = window.language;
+            
+            // Check and enhance the visualization of multiple bonds
             for (let i = 0; i < bonds.length; i++) {
                 const bond = bonds[i];
                 
-                // Si es un enlace múltiple (orden > 1)
+                // If it's a multiple bond (order > 1)
                 if (bond.order > 1) {
-                    // Obtener los átomos conectados por este enlace
+                    // Get the atoms connected by this bond
                     const atom1 = model.selectedAtoms({serial: bond.atom1.serial})[0];
                     const atom2 = model.selectedAtoms({serial: bond.atom2.serial})[0];
                     
                     if (atom1 && atom2) {
-                        // Para enlaces dobles, crear un estilo visual especial
+                        // For double bonds, create a special visual style
                         if (bond.order === 2) {
-                            console.log(`Enlace doble detectado entre ${atom1.elem}${atom1.serial} y ${atom2.elem}${atom2.serial}`);
+                            const doubleBondMsg = lang ? lang.getText('console.doubleBondDetected') : 'Double bond detected between';
+                            console.log(`${doubleBondMsg} ${atom1.elem}${atom1.serial} y ${atom2.elem}${atom2.serial}`);
                             
-                            // Los enlaces dobles los hacemos más anchos y con un color ligeramente diferente
+                            // Make double bonds wider and with a slightly different color
                             model.addBond({
                                 start: {x: atom1.x, y: atom1.y, z: atom1.z},
                                 end: {x: atom2.x, y: atom2.y, z: atom2.z},
-                                radius: 0.18,  // Un poco más ancho
-                                color: '#707070'  // Gris más oscuro
+                                radius: 0.18,  // A bit wider
+                                color: '#707070'  // Darker gray
                             });
                         }
-                        // Para enlaces triples, crear un estilo visual aún más distintivo
+                        // For triple bonds, create an even more distinctive visual style
                         else if (bond.order === 3) {
-                            console.log(`Enlace triple detectado entre ${atom1.elem}${atom1.serial} y ${atom2.elem}${atom2.serial}`);
+                            const tripleBondMsg = lang ? lang.getText('console.tripleBondDetected') : 'Triple bond detected between';
+                            console.log(`${tripleBondMsg} ${atom1.elem}${atom1.serial} y ${atom2.elem}${atom2.serial}`);
                             
-                            // Los enlaces triples los hacemos aún más anchos y con otro color
+                            // Make triple bonds even wider and with another color
                             model.addBond({
                                 start: {x: atom1.x, y: atom1.y, z: atom1.z},
                                 end: {x: atom2.x, y: atom2.y, z: atom2.z},
-                                radius: 0.22,  // Más ancho
-                                color: '#606060'  // Gris más oscuro
+                                radius: 0.22,  // Wider
+                                color: '#606060'  // Darker gray
                             });
                         }
                     }
                 }
             }
         } catch (error) {
-            console.error("Error al detectar enlaces múltiples:", error);
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('error.detectBonds') : 'Error detecting multiple bonds';
+            console.error(`${errorMsg}:`, error);
         }
 }
 }
 
-// Exportar la clase para su uso en otros archivos
+// Export the class for use in other files
 window.MoleculeViewer = MoleculeViewer;
 window.PseudoRandom = PseudoRandom;

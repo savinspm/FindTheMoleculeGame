@@ -1,52 +1,56 @@
 /**
- * Ranking - Clase para manejar el sistema de rankings del juego
+ * Ranking - Class to handle the game's ranking system
  */
 class Ranking {
     /**
      * Constructor
      */
     constructor() {
-        // Clave para LocalStorage
+        // Key for LocalStorage
         this.storageKey = 'molecule_game_rankings';
     }
     
     /**
-     * Carga los rankings guardados
-     * @returns {Array} - Lista de rankings ordenados
+     * Loads saved rankings
+     * @returns {Array} - List of ordered rankings
      */
     loadRankings() {
         try {
             const rankingsData = localStorage.getItem(this.storageKey);
             return rankingsData ? JSON.parse(rankingsData) : [];
         } catch (error) {
-            console.error('Error al cargar rankings:', error);
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('console.errorLoadingRankings') : 'Error loading rankings:';
+            console.error(`${errorMsg}`, error);
             return [];
         }
     }
     
     /**
-     * Guarda los rankings en LocalStorage
-     * @param {Array} rankings - Lista de rankings
+     * Saves rankings to LocalStorage
+     * @param {Array} rankings - List of rankings
      */
     saveRankings(rankings) {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(rankings));
         } catch (error) {
-            console.error('Error al guardar rankings:', error);
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('console.errorSavingRankings') : 'Error saving rankings:';
+            console.error(`${errorMsg}`, error);
         }
     }
     
     /**
-     * Añade un nuevo ranking
-     * @param {string} playerName - Nombre del jugador
-     * @param {number} score - Puntuación (aciertos)
-     * @param {number} attempts - Intentos realizados
-     * @param {number} time - Tiempo utilizado (en segundos)
-     * @returns {Array} - Lista actualizada de rankings
+     * Adds a new ranking
+     * @param {string} playerName - Player name
+     * @param {number} score - Score (hits)
+     * @param {number} attempts - Attempts made
+     * @param {number} time - Time used (in seconds)
+     * @returns {Array} - Updated list of rankings
      */
     addRanking(playerName, score, attempts, time) {
         try {
-            // Cargar rankings existentes
+            // Load existing rankings
             let rankings = this.loadRankings();
             
             // Calcular precisión
@@ -87,7 +91,9 @@ class Ranking {
             
             return rankings;
         } catch (error) {
-            console.error('Error al añadir ranking:', error);
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('console.errorAddingRanking') : 'Error adding ranking:';
+            console.error(`${errorMsg}`, error);
             return this.loadRankings();
         }
     }
@@ -110,20 +116,23 @@ class Ranking {
     updateRankingsDisplay(containerId, limit = 10) {
         const container = document.getElementById(containerId);
         if (!container) {
-            console.error(`Contenedor de rankings ${containerId} no encontrado`);
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('console.rankingsContainerNotFound') : 'Rankings container not found';
+            console.error(`${errorMsg} ${containerId}`);
             return;
         }
         
-        // Limpiar el contenedor
+        // Clear the container
         container.innerHTML = '';
         
-        // Obtener rankings
+        // Get rankings
         const rankings = this.getTopRankings(limit);
         
         if (rankings.length === 0) {
             const noData = document.createElement('div');
             noData.className = 'no-rankings';
-            noData.textContent = 'No hay datos todavía';
+            const lang = window.language;
+            noData.textContent = lang ? lang.getText('noRankings') : 'No data yet';
             container.appendChild(noData);
             return;
         }
@@ -163,11 +172,15 @@ class Ranking {
         if (allRankings.length > limit) {
             const scrollIndicator = document.createElement('div');
             scrollIndicator.className = 'scroll-indicator';
-            scrollIndicator.textContent = `Mostrando top ${limit} de ${allRankings.length} jugadores`;
+            const lang = window.language;
+            const showingText = lang ? lang.getText('console.showingTop') : 'Showing top';
+            const ofText = lang ? lang.getText('console.of') : 'of';
+            const playersText = lang ? lang.getText('console.players') : 'players';
+            scrollIndicator.textContent = `${showingText} ${limit} ${ofText} ${allRankings.length} ${playersText}`;
             container.appendChild(scrollIndicator);
         }
     }
 }
 
-// Exportar la clase para su uso en otros archivos
+// Export the class for use in other files
 window.Ranking = Ranking;

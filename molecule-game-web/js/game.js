@@ -1,31 +1,32 @@
 /**
- * MoleculeGame - Clase principal que maneja la lógica del juego
+ * MoleculeGame - Main class that handles the game logic
  */
 class MoleculeGame {
     /**
      * Constructor
      */
     constructor() {
-        // Estado del juego
+        // Game state
         this.playerName = '';
         this.score = 0;
         this.attempts = 0;
         this.startTime = null;
-        this.timeLimit = 60; // 60 segundos para todo el juego
+        this.timeLimit = 60; // 60 seconds countdown display
         this.gameOver = false;
         this.currentMolecule = null;
         this.options = [];
         this.correctOption = -1;
+        this.lastLoggedTime = null; // For debug logging
         
-        // Componentes
+        // Components
         this.moleculeParser = new MoleculeParser();
         this.moleculeViewer = new MoleculeViewer();
         this.ranking = new Ranking();
         
-        // Referencia a todos los archivos de moléculas disponibles
+        // Reference to all available molecule files
         this.moleculeFiles = [];
         
-        // Referencias a elementos DOM
+        // DOM element references
         this.screens = {
             welcome: document.getElementById('welcome-screen'),
             game: document.getElementById('game-screen'),
@@ -50,107 +51,124 @@ class MoleculeGame {
             rankingsContainer: document.getElementById('rankings-container')
         };
         
-        // Inicializar listeners de eventos
+        // Initialize event listeners
         this.initEventListeners();
     }
     
     /**
-     * Inicializa los listeners de eventos
+     * Initializes event listeners
      */
     initEventListeners() {
-        // Validar nombre de jugador y habilitar/deshabilitar botón de inicio
+        // Validate player name and enable/disable start button
         this.elements.playerNameInput.addEventListener('input', () => {
             const name = this.elements.playerNameInput.value.trim();
             this.elements.startButton.disabled = name.length === 0;
         });
         
-        // Iniciar juego al hacer clic en el botón de inicio
+        // Start game when clicking the start button
         this.elements.startButton.addEventListener('click', () => {
             this.startGame();
         });
         
-        // También iniciar al presionar Enter en el campo de nombre
+        // Also start when pressing Enter in the name field
         this.elements.playerNameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && this.elements.playerNameInput.value.trim().length > 0) {
                 this.startGame();
             }
         });
         
-        // Botón de jugar de nuevo
+        // Play again button
         this.elements.playAgainButton.addEventListener('click', () => {
             this.resetGame();
         });
     }
     
     /**
-     * Inicializa el juego cargando los archivos de moléculas
+     * Initializes the game by loading molecule files
      */
     async initialize() {
         try {
             this.moleculeFiles = await this.moleculeParser.loadAllMolecules();
             
             if (this.moleculeFiles.length === 0) {
-                alert('No se encontraron archivos de moléculas. Por favor, verifica la carpeta data/DB.');
+                const lang = window.language;
+                const noMoleculesMsg = lang ? lang.getText('error.noMolecules') : 'No molecule files found. Please check the data/DB folder.';
+                alert(noMoleculesMsg);
                 return false;
             }
             
-            console.log(`Se cargaron ${this.moleculeFiles.length} archivos de moléculas.`);
+            const lang = window.language;
+            const loadedMsg = lang ? lang.getText('console.moleculesLoaded') : 'molecule files loaded.';
+            console.log(`${this.moleculeFiles.length} ${loadedMsg}`);
             
-            // Actualizar rankings
+            // Update rankings
             this.ranking.updateRankingsDisplay('rankings-container', 10);
             
             return true;
         } catch (error) {
-            console.error('Error al inicializar el juego:', error);
-            alert('Error al cargar las moléculas. Por favor, recarga la página.');
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('error.initializeGame') : 'Error initializing game:';
+            console.error(`${errorMsg}`, error);
+            const reloadMsg = lang ? lang.getText('error.reloadPage') : 'Error loading molecules. Please reload the page.';
+            alert(reloadMsg);
             return false;
         }
     }
     
     /**
-     * Inicia el juego
+     * Starts the game
      */
     startGame() {
-        // Guardar nombre del jugador
+        // Save player name
         this.playerName = this.elements.playerNameInput.value.trim();
         
-        // Asegurarse de que la pantalla de bienvenida esté completamente oculta
+        // Ensure the welcome screen is completely hidden
         this.elements.welcomeScreen.style.display = 'none';
         this.elements.welcomeScreen.style.visibility = 'hidden';
         this.elements.welcomeScreen.style.opacity = '0';
         
-        // Preparar la pantalla del juego
+        // Prepare the game screen
         this.elements.gameScreen.style.display = 'flex';
         this.elements.gameScreen.style.visibility = 'visible';
         this.elements.gameScreen.style.opacity = '1';
         
-        // Actualizar información en la pantalla del juego
-        this.elements.playerNameDisplay.textContent = `Jugador: ${this.playerName}`;
-        this.elements.scoreDisplay.textContent = `Aciertos: ${this.score}`;
-        this.elements.attemptsDisplay.textContent = `Intentos: ${this.attempts}`;
-        this.elements.accuracyDisplay.textContent = `Precisión: 0%`;
+        // Update information on the game screen
+        const lang = window.language;
+        const playerLabel = lang ? lang.getText('playerLabel') : 'Player:';
+        const hitsLabel = lang ? lang.getText('scoreLabel') : 'Hits:';
+        const attemptsLabel = lang ? lang.getText('attemptsLabel') : 'Attempts:';
+        const accuracyLabel = lang ? lang.getText('accuracyLabel') : 'Accuracy:';
         
-        // Cambiar de pantalla usando la función mejorada
+        this.elements.playerNameDisplay.textContent = `${playerLabel} ${this.playerName}`;
+        this.elements.scoreDisplay.textContent = `${hitsLabel} ${this.score}`;
+        this.elements.attemptsDisplay.textContent = `${attemptsLabel} ${this.attempts}`;
+        this.elements.accuracyDisplay.textContent = `${accuracyLabel} 0%`;
+        
+        // Switch screen using the improved function
         this.showScreen('game');
         
-        // Iniciar temporizador
+        // Reset and start countdown timer
+        const timeLeftElement = document.getElementById('time-left');
+        if (timeLeftElement) {
+            timeLeftElement.textContent = '60';
+        }
         this.startTime = Date.now();
         this.startTimer();
         
-        // Configurar primer nivel
+        // Set up first level
         this.setupNewLevel();
     }
     
     /**
-     * Configura un nuevo nivel del juego
+     * Sets up a new game level
      */
     async setupNewLevel() {
         try {
-            // Limpiar mensaje de feedback
+            // Clear feedback message
             this.elements.feedbackMessage.textContent = '';
             this.elements.feedbackMessage.className = '';
             
-            // Eliminar clases de estilo de las opciones anteriores y resetear botones
+            // Remove style classes from previous options and reset buttons
             for (let i = 0; i < 3; i++) {
                 const optionElement = document.getElementById(`option-${i}`);
                 const selectButton = document.getElementById(`select-${i}`);
@@ -162,111 +180,129 @@ class MoleculeGame {
                 }
             }
             
-            // Verificar si hay suficientes moléculas
+            // Check if there are enough molecules
             if (this.moleculeFiles.length < 3) {
-                this.elements.feedbackMessage.textContent = 'No hay suficientes moléculas para continuar.';
+                const lang = window.language;
+                const notEnoughMsg = lang ? lang.getText('error.notEnoughMolecules') : 'Not enough molecules to continue.';
+                this.elements.feedbackMessage.textContent = notEnoughMsg;
                 this.elements.feedbackMessage.className = 'error';
                 return;
             }
             
-            // Intentar cargar información del nivel actual desde el archivo JSON
+            // Try to load current level information from JSON file
             let similarMolecules = await this.tryLoadSimilarMolecules();
             
             if (similarMolecules) {
-                // Si tenemos información del archivo JSON con niveles
+                // If we have information from the JSON file with levels
                 this.currentMolecule = `data/DB/${similarMolecules.target.file}`;
                 
-                // Extraer el nombre de la molécula objetivo
+                // Extract target molecule name
                 if (this.elements.targetMoleculeName) {
                     this.elements.targetMoleculeName.textContent = similarMolecules.target.name;
                 }
                 
-                // Crear opciones con las moléculas similares
+                // Create options with similar molecules
                 this.options = [
                     this.currentMolecule,
                     `data/DB/${similarMolecules.similar[0].file}`,
                     `data/DB/${similarMolecules.similar[1].file}`
                 ];
                 
-                // Mezclar las opciones
+                // Shuffle the options
                 this.shuffleArray(this.options);
                 
-                // Encontrar índice de la opción correcta
+                // Find index of the correct option
                 this.correctOption = this.options.indexOf(this.currentMolecule);
                 
-                console.log("Usando nivel con moléculas similares:");
-                console.log("Molécula objetivo:", this.currentMolecule);
-                console.log("Opciones incorrectas:", this.options[0] === this.currentMolecule ? this.options.slice(1) : 
+                const lang = window.language;
+                const usingLevelMsg = lang ? lang.getText('console.usingSimilarMolecules') : 'Using level with similar molecules:';
+                const targetMoleculeMsg = lang ? lang.getText('console.targetMolecule') : 'Target molecule:';
+                const incorrectOptionsMsg = lang ? lang.getText('console.incorrectOptions') : 'Incorrect options:';
+                
+                console.log(usingLevelMsg);
+                console.log(`${targetMoleculeMsg}`, this.currentMolecule);
+                console.log(`${incorrectOptionsMsg}`, this.options[0] === this.currentMolecule ? this.options.slice(1) : 
                     this.options[1] === this.currentMolecule ? [this.options[0], this.options[2]] : this.options.slice(0, 2));
             } else {
-                // Método original como respaldo si no tenemos el archivo JSON con niveles
-                // Seleccionar molécula objetivo aleatoriamente
+                // Original method as fallback if we don't have the JSON file with levels
+                // Select target molecule randomly
                 const targetIndex = Math.floor(Math.random() * this.moleculeFiles.length);
                 this.currentMolecule = this.moleculeFiles[targetIndex];
                 
-                // Extraer el nombre de la molécula del archivo
+                // Extract molecule name from file
                 const moleculeFile = this.currentMolecule.split('/').pop().replace('.mol2', '');
                 if (this.elements.targetMoleculeName) {
                     this.elements.targetMoleculeName.textContent = moleculeFile;
                 }
                 
-                // Crear lista de moléculas disponibles excluyendo la objetivo
+                // Create list of available molecules excluding the target
                 let availableOptions = [...this.moleculeFiles];
-                availableOptions.splice(targetIndex, 1); // Remover la molécula objetivo
+                availableOptions.splice(targetIndex, 1); // Remove target molecule
                 
-                // Mezclar las moléculas disponibles para asegurar diversidad
+                // Shuffle available molecules to ensure diversity
                 this.shuffleArray(availableOptions);
                 
-                // Tomar las primeras 2 moléculas diferentes para las opciones incorrectas
+                // Take the first 2 different molecules for incorrect options
                 const wrong1 = availableOptions[0];
                 const wrong2 = availableOptions[1];
                 
-                // Verificar que son diferentes entre sí
-                console.log("Usando selección aleatoria de moléculas:");
-                console.log("Molécula objetivo:", this.currentMolecule);
-                console.log("Opción incorrecta 1:", wrong1);
-                console.log("Opción incorrecta 2:", wrong2);
+                // Verify they are different from each other
+                const lang = window.language;
+                const usingRandomMsg = lang ? lang.getText('console.usingRandomSelection') : 'Using random selection of molecules:';
+                const targetMoleculeMsg = lang ? lang.getText('console.targetMolecule') : 'Target molecule:';
+                const incorrectOption1Msg = lang ? lang.getText('console.incorrectOption1') : 'Incorrect option 1:';
+                const incorrectOption2Msg = lang ? lang.getText('console.incorrectOption2') : 'Incorrect option 2:';
                 
-                // Crear y mezclar opciones
+                console.log(usingRandomMsg);
+                console.log(`${targetMoleculeMsg}`, this.currentMolecule);
+                console.log(`${incorrectOption1Msg}`, wrong1);
+                console.log(`${incorrectOption2Msg}`, wrong2);
+                
+                // Create and shuffle options
                 this.options = [this.currentMolecule, wrong1, wrong2];
                 this.shuffleArray(this.options);
                 
-                // Encontrar índice de la opción correcta
+                // Find index of the correct option
                 this.correctOption = this.options.indexOf(this.currentMolecule);
             }
             
-            console.log("Opción correcta en posición:", this.correctOption);
+            const lang = window.language;
+            const correctOptionMsg = lang ? lang.getText('console.correctOptionAt') : 'Correct option at position:';
+            console.log(`${correctOptionMsg}`, this.correctOption);
             
-            // Crear visualizadores 3D
+            // Create 3D viewers
             await this.createMoleculeViewers();
             
-            // Añadir listeners de clic a los botones de selección
+            // Add click listeners to selection buttons
             for (let i = 0; i < 3; i++) {
                 const selectButton = document.getElementById(`select-${i}`);
                 selectButton.onclick = () => this.checkAnswer(i);
             }
         } catch (error) {
-            console.error('Error al configurar nivel:', error);
-            this.elements.feedbackMessage.textContent = 'Error al cargar nivel. Intentando de nuevo...';
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('console.errorSettingUpLevel') : 'Error setting up level:';
+            console.error(`${errorMsg}`, error);
+            const retryMsg = lang ? lang.getText('error.loadingLevel') : 'Error loading level. Trying again...';
+            this.elements.feedbackMessage.textContent = retryMsg;
             this.elements.feedbackMessage.className = 'error';
             
-            // Intentar de nuevo tras un breve retraso
+            // Try again after a brief delay
             setTimeout(() => this.setupNewLevel(), 2000);
         }
     }
     
     /**
-     * Crea los visualizadores de moléculas para el nivel actual
+     * Creates molecule viewers for the current level
      */
     async createMoleculeViewers() {
         try {
-            // Para el enfoque declarativo de 3Dmol.js, configuramos el atributo data-href
-            // para cada contenedor de molécula y dejamos que 3Dmol.js haga el resto
+            // For the declarative 3Dmol.js approach, we set the data-href attribute
+            // for each molecule container and let 3Dmol.js do the rest
             
-            // Generar semillas para rotaciones aleatorias pero consistentes
+            // Generate seeds for random but consistent rotations
             const baseSeed = Date.now();
             const getRotationParams = (index) => {
-                // Usar una semilla diferente para cada molécula pero consistente en la misma sesión
+                // Use a different seed for each molecule but consistent in the same session
                 const seed = baseSeed + (index * 1000);
                 const random = () => {
                     const x = Math.sin(seed + index++) * 10000;
@@ -399,20 +435,24 @@ class MoleculeGame {
     }
     
     /**
-     * Verifica la respuesta seleccionada
-     * @param {number} selectedOption - Índice de la opción seleccionada
+     * Checks the selected answer
+     * @param {number} selectedOption - Index of the selected option
      */
     checkAnswer(selectedOption) {
-        // Incrementar intentos
+        // Increment attempts
         this.attempts++;
-        this.elements.attemptsDisplay.textContent = `Intentos: ${this.attempts}`;
+        const lang = window.language;
+        const attemptsLabel = lang ? lang.getText('attemptsLabel') : 'Attempts:';
+        this.elements.attemptsDisplay.textContent = `${attemptsLabel} ${this.attempts}`;
         
-        // Verificar si es correcta
+        // Check if it's correct
         if (selectedOption === this.correctOption) {
-            // Respuesta correcta
+            // Correct answer
             this.score++;
-            this.elements.scoreDisplay.textContent = `Aciertos: ${this.score}`;
-            this.elements.feedbackMessage.textContent = '¡CORRECTO! ¡Muy bien!';
+            const hitsLabel = lang ? lang.getText('scoreLabel') : 'Hits:';
+            this.elements.scoreDisplay.textContent = `${hitsLabel} ${this.score}`;
+            const correctMsg = lang ? lang.getText('correct') : 'CORRECT! Well done!';
+            this.elements.feedbackMessage.textContent = correctMsg;
             this.elements.feedbackMessage.className = 'correct';
             
             // Resaltar la opción correcta
@@ -434,108 +474,142 @@ class MoleculeGame {
                 this.setupNewLevel();
             }, 600);
         } else {
-            // Respuesta incorrecta
-            this.elements.feedbackMessage.textContent = '¡INCORRECTO! Inténtalo de nuevo';
+            // Incorrect answer
+            const lang = window.language;
+            const incorrectMsg = lang ? lang.getText('incorrect') : 'INCORRECT! Try again';
+            this.elements.feedbackMessage.textContent = incorrectMsg;
             this.elements.feedbackMessage.className = 'incorrect';
             
-            // Resaltar brevemente la opción incorrecta
+            // Briefly highlight the incorrect option
             const optionElement = document.getElementById(`option-${selectedOption}`);
             optionElement.classList.add('incorrect-option');
             
-            // Hacer scroll al mensaje de feedback si es necesario en pantallas pequeñas
+            // Scroll to feedback message if necessary on small screens
             this.elements.feedbackMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             
-            // Deshabilitar temporalmente el botón seleccionado
+            // Temporarily disable the selected button
             document.getElementById(`select-${selectedOption}`).disabled = true;
             
-            // Quitar clase y habilitar botón después de un momento
+            // Remove class and enable button after a moment
             setTimeout(() => {
                 optionElement.classList.remove('incorrect-option');
                 document.getElementById(`select-${selectedOption}`).disabled = false;
             }, 800);
         }
         
-        // Actualizar precisión
+        // Update accuracy
         this.updateAccuracy();
     }
     
     /**
-     * Actualiza el indicador de precisión
+     * Updates the accuracy indicator
      */
     updateAccuracy() {
         const accuracy = this.attempts > 0 ? (this.score / this.attempts) * 100 : 0;
-        this.elements.accuracyDisplay.textContent = `Precisión: ${accuracy.toFixed(1)}%`;
+        const lang = window.language;
+        const accuracyLabel = lang ? lang.getText('accuracyLabel') : 'Accuracy:';
+        this.elements.accuracyDisplay.textContent = `${accuracyLabel} ${accuracy.toFixed(1)}%`;
     }
     
     /**
-     * Inicia el temporizador del juego
+     * Starts the game timer - countdown from 60 to 0, game ends when reaching 0
      */
     startTimer() {
+        console.log('Timer started at:', new Date().toLocaleTimeString());
         const timerInterval = setInterval(() => {
-            // Si el juego ha terminado, detener el temporizador
+            // If the game is over, stop the timer
             if (this.gameOver) {
                 clearInterval(timerInterval);
                 return;
             }
             
-            // Calcular tiempo restante
+            // Calculate elapsed time
             const elapsedTime = (Date.now() - this.startTime) / 1000;
+            
+            // Calculate remaining time
             const remainingTime = Math.max(0, this.timeLimit - elapsedTime);
             
-            // Actualizar visualización
-            this.elements.timeLeft.textContent = Math.ceil(remainingTime);
+            // Update display - get element reference dynamically to handle language changes
+            const timeLeftElement = document.getElementById('time-left');
+            if (timeLeftElement) {
+                timeLeftElement.textContent = Math.ceil(remainingTime);
+            }
             
-            // Si se acabó el tiempo, finalizar juego
+            // Debug log every 5 seconds
+            if (Math.ceil(remainingTime) % 5 === 0 && Math.ceil(remainingTime) !== this.lastLoggedTime) {
+                console.log('Timer update:', Math.ceil(remainingTime), 'seconds remaining');
+                this.lastLoggedTime = Math.ceil(remainingTime);
+            }
+            
+            // If time is up, end game
             if (remainingTime <= 0) {
+                console.log('Time up! Ending game...');
+                // Show time's up message
+                const lang = window.language;
+                const timeUpMsg = lang ? lang.getText('timeUp') : "Time's up!";
+                this.elements.feedbackMessage.textContent = timeUpMsg;
+                this.elements.feedbackMessage.className = 'incorrect';
+                
                 clearInterval(timerInterval);
-                this.endGame();
+                // Small delay to show the message before ending
+                setTimeout(() => {
+                    this.endGame();
+                }, 1000);
             }
         }, 200);
     }
     
     /**
-     * Finaliza el juego
+     * Ends the game
      */
     endGame() {
         this.gameOver = true;
         
-        // Calcular tiempo total de juego
+        // Calculate total game time
         const totalTime = (Date.now() - this.startTime) / 1000;
         
-        // Calcular precisión
+        // Calculate accuracy
         const accuracy = this.attempts > 0 ? (this.score / this.attempts) * 100 : 0;
         
-        // Guardar ranking
+        // Save ranking
         this.ranking.addRanking(this.playerName, this.score, this.attempts, totalTime);
         
-        // Asegurarse de que la pantalla del juego esté completamente oculta
+        // Ensure the game screen is completely hidden
         this.elements.gameScreen.style.display = 'none';
         this.elements.gameScreen.style.visibility = 'hidden';
         this.elements.gameScreen.style.opacity = '0';
         
-        // Preparar la pantalla de fin de juego
+        // Prepare the game over screen
         this.elements.gameOverScreen.style.display = 'flex';
         this.elements.gameOverScreen.style.visibility = 'visible';
         this.elements.gameOverScreen.style.opacity = '1';
         
-        // Mostrar estadísticas finales
+        // Show final statistics with language support
+        const lang = window.language;
+        const playerLabel = lang ? lang.getText('playerLabel') : 'Player:';
+        const hitsLabel = lang ? lang.getText('scoreLabel') : 'Hits:';
+        const attemptsLabel = lang ? lang.getText('attemptsLabel') : 'Attempts:';
+        const accuracyLabel = lang ? lang.getText('accuracyLabel') : 'Accuracy:';
+        const totalTimeLabel = lang ? lang.getText('totalTimeLabel') : 'Total time:';
+        const secondsLabel = lang ? lang.getText('secondsLabel') : 'seconds';
+        
         this.elements.finalStats.innerHTML = `
-            <p>Jugador: <strong>${this.playerName}</strong></p>
-            <p>Aciertos: <strong>${this.score}</strong></p>
-            <p>Intentos: <strong>${this.attempts}</strong></p>
-            <p>Precisión: <strong>${accuracy.toFixed(1)}%</strong></p>
-            <p>Tiempo total: <strong>${totalTime.toFixed(1)} segundos</strong></p>
+            <p>${playerLabel} <strong>${this.playerName}</strong></p>
+            <p>${hitsLabel} <strong>${this.score}</strong></p>
+            <p>${attemptsLabel} <strong>${this.attempts}</strong></p>
+            <p>${accuracyLabel} <strong>${accuracy.toFixed(1)}%</strong></p>
+            <p>${totalTimeLabel} <strong>${totalTime.toFixed(1)} ${secondsLabel}</strong></p>
         `;
         
-        // Cambiar a pantalla de fin de juego
+        // Switch to game over screen
         this.showScreen('gameOver');
         
-        // Actualizar rankings
+        // Update rankings
         this.ranking.updateRankingsDisplay('rankings-container', 10);
     }
     
     /**
-     * Reinicia el juego
+     * Resets the game
      */
     resetGame() {
         this.score = 0;
@@ -546,51 +620,57 @@ class MoleculeGame {
         this.options = [];
         this.correctOption = -1;
         
-        // Asegurarse de que la pantalla de fin de juego esté completamente oculta
+        // Ensure the game over screen is completely hidden
         this.elements.gameOverScreen.style.display = 'none';
         this.elements.gameOverScreen.style.visibility = 'hidden';
         this.elements.gameOverScreen.style.opacity = '0';
         
-        // Preparar la pantalla de bienvenida
+        // Prepare the welcome screen
         this.elements.welcomeScreen.style.display = 'flex';
         this.elements.welcomeScreen.style.visibility = 'visible';
         this.elements.welcomeScreen.style.opacity = '1';
         
-        // Limpiar campos
+        // Clear fields
         this.elements.playerNameInput.value = '';
         this.elements.startButton.disabled = true;
         
-        // Limpiar el mensaje de feedback si existiera
+        // Reset timer display to countdown start
+        const timeLeftElement = document.getElementById('time-left');
+        if (timeLeftElement) {
+            timeLeftElement.textContent = '60';
+        }
+        
+        // Clear feedback message if it exists
         if (this.elements.feedbackMessage) {
             this.elements.feedbackMessage.textContent = '';
             this.elements.feedbackMessage.className = '';
         }
         
-        // Volver a la pantalla de bienvenida
+        // Return to welcome screen
         this.showScreen('welcome');
         
-        // Actualizar rankings
+        // Update rankings
         this.ranking.updateRankingsDisplay('rankings-container', 10);
     }
     
     /**
-     * Muestra una pantalla específica y oculta las demás
-     * @param {string} screenId - Identificador de la pantalla a mostrar ('welcome', 'game' o 'gameOver')
+     * Shows a specific screen and hides the others
+     * @param {string} screenId - Screen identifier to show ('welcome', 'game' or 'gameOver')
      */
     showScreen(screenId) {
-        // Primero, eliminar la clase active de todas las pantallas
+        // First, remove the active class from all screens
         Object.keys(this.screens).forEach(key => {
             this.screens[key].classList.remove('active');
-            // Asegurarse de que las pantallas no activas tengan z-index bajo
+            // Ensure inactive screens have low z-index
             this.screens[key].style.zIndex = "1";
         });
         
-        // Luego, mostrar solo la pantalla solicitada
+        // Then, show only the requested screen
         if (this.screens[screenId]) {
             this.screens[screenId].classList.add('active');
             this.screens[screenId].style.zIndex = "10";
             
-            // Si estamos mostrando una nueva pantalla, asegurémonos de limpiar cualquier feedback o mensaje anterior
+            // If we're showing a new screen, make sure to clear any previous feedback or messages
             if (screenId !== 'game' && this.elements.feedbackMessage) {
                 this.elements.feedbackMessage.textContent = '';
                 this.elements.feedbackMessage.className = '';
@@ -599,21 +679,21 @@ class MoleculeGame {
     }
     
     /**
-     * Intenta cargar un nivel con moléculas similares desde el archivo JSON
-     * @returns {Object|null} - Información del nivel o null si no está disponible
+     * Tries to load a level with similar molecules from the JSON file
+     * @returns {Object|null} - Level information or null if not available
      */
     async tryLoadSimilarMolecules() {
         try {
-            // Intentar cargar el archivo de niveles
+            // Try to load the levels file
             const response = await fetch('data/molecules.json');
             
             if (response.ok) {
                 const data = await response.json();
                 
-                // Verificar si tenemos la estructura de niveles
+                // Check if we have the levels structure
                 if (data.levels && Array.isArray(data.levels) && data.levels.length > 0) {
-                    // Progresión de dificultad - seleccionar nivel basado en la puntuación actual
-                    // Los primeros niveles son más fáciles (moléculas más pequeñas)
+                    // Difficulty progression - select level based on current score
+                    // First levels are easier (smaller molecules)
                     const levelIndex = Math.min(this.score, data.levels.length - 1);
                     return data.levels[levelIndex];
                 }
@@ -621,14 +701,16 @@ class MoleculeGame {
             
             return null;
         } catch (error) {
-            console.error('Error al cargar niveles con moléculas similares:', error);
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('console.errorLoadingSimilarMolecules') : 'Error loading levels with similar molecules:';
+            console.error(`${errorMsg}`, error);
             return null;
         }
     }
     
     /**
-     * Mezcla aleatoriamente un array
-     * @param {Array} array - Array a mezclar
+     * Randomly shuffles an array
+     * @param {Array} array - Array to shuffle
      */
     shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -638,9 +720,9 @@ class MoleculeGame {
     }
     
     /**
-     * Genera un hash simple a partir de un string
-     * @param {string} str - String a convertir en hash
-     * @returns {number} - Hash numérico
+     * Generates a simple hash from a string
+     * @param {string} str - String to convert to hash
+     * @returns {number} - Numeric hash
      */
     simpleHash(str) {
         let hash = 0;
@@ -648,22 +730,22 @@ class MoleculeGame {
         for (let i = 0; i < str.length; i++) {
             const char = str.charCodeAt(i);
             hash = ((hash << 5) - hash) + char;
-            hash = hash & hash; // Convertir a entero de 32 bits
+            hash = hash & hash; // Convert to 32-bit integer
         }
         return Math.abs(hash);
     }
     
     /**
-     * Aplica una rotación alrededor de un eje arbitrario a un modelo 3D
-     * @param {Object} model - El modelo 3D de 3Dmol.js
-     * @param {number} axisX - Componente X del eje de rotación (normalizado)
-     * @param {number} axisY - Componente Y del eje de rotación (normalizado) 
-     * @param {number} axisZ - Componente Z del eje de rotación (normalizado)
-     * @param {number} angle - Ángulo de rotación en grados
+     * Applies a rotation around an arbitrary axis to a 3D model
+     * @param {Object} model - The 3Dmol.js 3D model
+     * @param {number} axisX - X component of the rotation axis (normalized)
+     * @param {number} axisY - Y component of the rotation axis (normalized) 
+     * @param {number} axisZ - Z component of the rotation axis (normalized)
+     * @param {number} angle - Rotation angle in degrees
      */
     applyArbitraryAxisRotation(model, axisX, axisY, axisZ, angle) {
         try {
-            // Normalizar el vector del eje
+            // Normalize the axis vector
             const length = Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
             if (length === 0) return;
             
@@ -671,24 +753,24 @@ class MoleculeGame {
             axisY /= length;
             axisZ /= length;
             
-            // Convertir ángulo a radianes
+            // Convert angle to radians
             const angleRad = (angle * Math.PI) / 180;
             const c = Math.cos(angleRad);
             const s = Math.sin(angleRad);
             const t = 1 - c;
             
-            // Matriz de rotación de Rodrigues
+            // Rodrigues rotation matrix
             const rotMatrix = [
                 [t*axisX*axisX + c,          t*axisX*axisY - s*axisZ,    t*axisX*axisZ + s*axisY],
                 [t*axisX*axisY + s*axisZ,    t*axisY*axisY + c,          t*axisY*axisZ - s*axisX],
                 [t*axisX*axisZ - s*axisY,    t*axisY*axisZ + s*axisX,    t*axisZ*axisZ + c]
             ];
             
-            // Obtener los átomos del modelo
+            // Get model atoms
             const atoms = model.selectedAtoms({});
             if (atoms.length === 0) return;
             
-            // Calcular el centro de masa para rotar alrededor de él
+            // Calculate center of mass to rotate around it
             let centerX = 0, centerY = 0, centerZ = 0;
             for (const atom of atoms) {
                 centerX += atom.x;
@@ -699,30 +781,42 @@ class MoleculeGame {
             centerY /= atoms.length;
             centerZ /= atoms.length;
             
-            // Aplicar rotación a cada átomo
+            // Apply rotation to each atom
             for (const atom of atoms) {
-                // Trasladar al origen
+                // Translate to origin
                 const x = atom.x - centerX;
                 const y = atom.y - centerY;
                 const z = atom.z - centerZ;
                 
-                // Aplicar rotación
+                // Apply rotation
                 const newX = rotMatrix[0][0]*x + rotMatrix[0][1]*y + rotMatrix[0][2]*z;
                 const newY = rotMatrix[1][0]*x + rotMatrix[1][1]*y + rotMatrix[1][2]*z;
                 const newZ = rotMatrix[2][0]*x + rotMatrix[2][1]*y + rotMatrix[2][2]*z;
                 
-                // Trasladar de vuelta
+                // Translate back
                 atom.x = newX + centerX;
                 atom.y = newY + centerY;
                 atom.z = newZ + centerZ;
             }
             
-            console.log(`Rotación de eje arbitrario aplicada: (${axisX.toFixed(3)}, ${axisY.toFixed(3)}, ${axisZ.toFixed(3)}) @ ${angle.toFixed(1)}°`);
+            const lang = window.language;
+            const rotationMsg = lang ? lang.getText('console.arbitraryAxisRotation') : 'Arbitrary axis rotation applied:';
+            console.log(`${rotationMsg} (${axisX.toFixed(3)}, ${axisY.toFixed(3)}, ${axisZ.toFixed(3)}) @ ${angle.toFixed(1)}°`);
         } catch (error) {
-            console.error('Error aplicando rotación de eje arbitrario:', error);
+            const lang = window.language;
+            const errorMsg = lang ? lang.getText('error.applyingRotation') : 'Error applying arbitrary axis rotation:';
+            console.error(`${errorMsg}`, error);
         }
+    }
+    
+    /**
+     * Updates DOM references after language change recreates elements
+     */
+    updateDOMReferences() {
+        // Update the timeLeft reference since it gets recreated when language changes
+        this.elements.timeLeft = document.getElementById('time-left');
     }
 }
 
-// Exportar la clase para su uso en otros archivos
+// Export the class for use in other files
 window.MoleculeGame = MoleculeGame;

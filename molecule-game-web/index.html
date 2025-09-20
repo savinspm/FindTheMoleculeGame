@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Encuentra la Molécula!</title>
+    <title id="page-title">Find the Molecule!</title>
     <!-- Fuentes de Google -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
     <!-- Biblioteca 3Dmol.js para visualización de moléculas 3D -->
@@ -17,22 +17,29 @@
         <!-- Pantalla de Bienvenida -->
         <div id="welcome-screen" class="screen active">
             <div class="welcome-main-content">
-                <h1>¡ENCUENTRA LA MOLÉCULA!</h1>
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <span class="language-label">Language / Idioma:</span>
+                    <button id="lang-en" class="language-button">English</button>
+                    <button id="lang-es" class="language-button">Español</button>
+                </div>
+                
+                <h1 id="welcome-title">FIND THE MOLECULE!</h1>
                 <div class="instructions">
-                    <p>¡Hola! Bienvenido al juego de moléculas</p>
-                    <p>Tienes que encontrar la molécula correcta</p>
-                    <p>¡Tienes 1 minuto para acertar todas las posibles!</p>
-                    <p>Escribe tu nombre y presiona el botón para empezar</p>
+                    <p id="welcome-subtitle">Hello! Welcome to the molecule game</p>
+                    <p id="instructions-1">You have to find the correct molecule</p>
+                    <p id="instructions-2">You have 1 minute to get as many right as possible!</p>
+                    <p id="instructions-3">Enter your name and press the button to start</p>
                 </div>
                 <div class="name-input">
-                    <label for="player-name">Tu nombre:</label>
-                    <input type="text" id="player-name" maxlength="20" placeholder="Ingresa tu nombre">
+                    <label for="player-name" id="name-label">Your name:</label>
+                    <input type="text" id="player-name" maxlength="20" placeholder="Enter your name">
                 </div>
-                <button id="start-button" disabled>¡COMENZAR!</button>
+                <button id="start-button" disabled>START!</button>
             </div>
             <div class="welcome-ranking">
                 <div class="ranking-sidebar">
-                    <h2>RANKING</h2>
+                    <h2 id="ranking-title">RANKING</h2>
                     <div id="rankings-container"></div>
                 </div>
             </div>
@@ -43,16 +50,16 @@
             <div class="game-container">
                 <div class="game-info">
                     <div class="player-info">
-                        <div id="player-name-display">Jugador: </div>
-                        <div id="score-display">Aciertos: 0</div>
-                        <div id="attempts-display">Intentos: 0</div>
-                        <div id="accuracy-display">Precisión: 0%</div>
+                        <div id="player-name-display">Player: </div>
+                        <div id="score-display">Hits: 0</div>
+                        <div id="attempts-display">Attempts: 0</div>
+                        <div id="accuracy-display">Accuracy: 0%</div>
                     </div>
-                    <div class="timer">Tiempo: <span id="time-left">60</span>s</div>
+                    <div class="timer" id="timer-label">Time: <span id="time-left">60</span>s</div>
                 </div>
                 <div class="game-grid-2x2">
                     <div class="grid-cell query-cell">
-                        <h2>Encuentra: <span id="target-molecule-name"></span></h2>
+                        <h2 id="find-label">Find: <span id="target-molecule-name"></span></h2>
                         <div id="target-molecule" class="molecule-container query-molecule viewer_3Dmoljs" data-style="stick" data-backgroundcolor="0xffffff"></div>
                         <div id="feedback-message"></div>
                     </div>
@@ -86,13 +93,14 @@
 
         <!-- Pantalla de Game Over -->
         <div id="game-over-screen" class="screen">
-            <h1>¡JUEGO TERMINADO!</h1>
+            <h1 id="game-over-title">GAME OVER!</h1>
             <div id="final-stats"></div>
-            <button id="play-again-button">Jugar de nuevo</button>
+            <button id="play-again-button">Play Again</button>
         </div>
     </div>
 
     <!-- Scripts JavaScript -->
+    <script src="js/language.js"></script>
     <script src="js/molecule-parser.js"></script>
     <script src="js/molecule-viewer.js"></script>
     <script src="js/ranking.js"></script>
