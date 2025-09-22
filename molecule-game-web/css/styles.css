@@ -113,7 +113,7 @@
 .option-cell {
     position: relative;
     padding: 0;
-    overflow: visible;
+    overflow: visible; /* permitir sombras sin corte */
 }
 
 .option-left, .option-right {
@@ -567,8 +567,8 @@ body {
 }
 
 .molecule-choice:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 16px var(--yellow);
+    /* Sin escala para evitar cortes; solo realce visual */
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 .molecule-option {
     display: block;
@@ -585,8 +585,8 @@ body {
     overflow: visible !important; /* Asegurar que el botón no se recorte */
 }
 .molecule-option:hover {
-    transform: scale(1.06);
-    box-shadow: 0 4px 16px var(--purple);
+    /* Quitar escala para que no se recorten márgenes */
+    box-shadow: 0 0 0 3px var(--purple), 0 8px 20px rgba(0,0,0,0.12);
 }
 @media (max-width: 992px) {
     .molecule-options {
