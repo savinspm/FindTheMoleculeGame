@@ -558,9 +558,11 @@ body {
     transform: translateY(-50%);
     width: auto;
     min-width: 0;
+    z-index: 100; /* por encima del canvas 3D */
+    pointer-events: auto;
 }
 .option-left .button-container {
-    left: 8px;
+    left: 10px; /* pequeño desplazamiento para evitar solaparse con el borde */
     right: auto;
 }
 
@@ -676,7 +678,7 @@ body {
     margin-right: 15px;
     transform-origin: right center;
     position: relative;
-    z-index: 20; /* Ensure button stays above molecule */
+    z-index: 110; /* asegurar visibilidad sobre el canvas */
     left: 0; /* Don't use negative positioning */
 }
 
@@ -684,7 +686,7 @@ body {
     margin-left: 15px;
     transform-origin: left center;
     position: relative;
-    z-index: 20; /* Ensure button stays above molecule */
+    z-index: 110; /* asegurar visibilidad sobre el canvas */
     right: 0; /* Don't use negative positioning */
 }
 
