@@ -69,14 +69,14 @@ class Ranking {
             // Añadir a la lista
             rankings.push(newRanking);
             
-            // Ordenar por precisión (descendente), luego por puntuación (descendente) 
-            // y finalmente por tiempo (ascendente)
+            // Ordenar por número de aciertos (desc), en caso de empate por ratio de acierto (desc)
+            // y finalmente por tiempo (asc)
             rankings.sort((a, b) => {
-                if (a.accuracy !== b.accuracy) {
-                    return b.accuracy - a.accuracy;
-                }
                 if (a.score !== b.score) {
                     return b.score - a.score;
+                }
+                if (a.accuracy !== b.accuracy) {
+                    return b.accuracy - a.accuracy;
                 }
                 return a.time - b.time;
             });
@@ -105,6 +105,12 @@ class Ranking {
      */
     getTopRankings(limit = 10) {
         const rankings = this.loadRankings();
+        // Asegurar el mismo orden incluso si hay datos antiguos
+        rankings.sort((a, b) => {
+            if (a.score !== b.score) return b.score - a.score;
+            if (a.accuracy !== b.accuracy) return b.accuracy - a.accuracy;
+            return a.time - b.time;
+        });
         return rankings.slice(0, limit);
     }
     
