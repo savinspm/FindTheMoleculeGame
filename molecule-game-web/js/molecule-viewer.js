@@ -568,7 +568,15 @@ USER_CHARGES
             const errorMsg = lang ? lang.getText('error.detectBonds') : 'Error detecting multiple bonds';
             console.error(`${errorMsg}:`, error);
         }
-}
+    }
+    
+    /**
+     * Clears the molecule cache to free memory
+     */
+    clearCache() {
+        this.moleculesCache = {};
+        console.log('MoleculeViewer cache cleared');
+    }
 }
 
 // Export the class for use in other files

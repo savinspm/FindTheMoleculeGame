@@ -18,6 +18,12 @@ class MoleculeGame {
         this.correctOption = -1;
         this.lastLoggedTime = null; // For debug logging
         
+        // Memory management
+        this.timerInterval = null;
+        this.activeViewers = [];
+        this.eventListeners = [];
+        this.isDragging = false;
+        
         // Components
         this.moleculeParser = new MoleculeParser();
         this.moleculeViewer = new MoleculeViewer();
@@ -516,10 +522,15 @@ class MoleculeGame {
      */
     startTimer() {
         console.log('Timer started at:', new Date().toLocaleTimeString());
-        const timerInterval = setInterval(() => {
+        
+        // Clear any existing timer first
+        this.clearTimer();
+        
+        this.timerInterval = setInterval(() => {
             // If the game is over, stop the timer
             if (this.gameOver) {
-                clearInterval(timerInterval);
+                clearInterval(this.timerInterval);
+                this.timerInterval = null;
                 return;
             }
             
@@ -550,7 +561,8 @@ class MoleculeGame {
                 this.elements.feedbackMessage.textContent = timeUpMsg;
                 this.elements.feedbackMessage.className = 'incorrect';
                 
-                clearInterval(timerInterval);
+                clearInterval(this.timerInterval);
+                this.timerInterval = null;
                 // Small delay to show the message before ending
                 setTimeout(() => {
                     this.endGame();
@@ -564,6 +576,9 @@ class MoleculeGame {
      */
     endGame() {
         this.gameOver = true;
+        
+        // Clean up resources
+        this.cleanup();
         
         // Calculate total game time
         const totalTime = (Date.now() - this.startTime) / 1000;
@@ -612,6 +627,9 @@ class MoleculeGame {
      * Resets the game
      */
     resetGame() {
+        // Clean up resources first
+        this.cleanup();
+        
         this.score = 0;
         this.attempts = 0;
         this.startTime = null;
@@ -815,6 +833,71 @@ class MoleculeGame {
     updateDOMReferences() {
         // Update the timeLeft reference since it gets recreated when language changes
         this.elements.timeLeft = document.getElementById('time-left');
+    }
+    
+    /**
+     * Clears timer safely
+     */
+    clearTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+    }
+    
+    /**
+     * Cleans up all resources to prevent memory leaks
+     */
+    cleanup() {
+        // Clear timer
+        this.clearTimer();
+        
+        // Clean up 3D viewers
+        this.activeViewers.forEach(viewer => {
+            try {
+                if (viewer && typeof viewer.clear === 'function') {
+                    viewer.clear();
+                }
+            } catch (error) {
+                console.warn('Error clearing viewer:', error);
+            }
+        });
+        this.activeViewers = [];
+        
+        // Remove event listeners
+        this.eventListeners.forEach(({ element, event, handler }) => {
+            try {
+                element.removeEventListener(event, handler);
+            } catch (error) {
+                console.warn('Error removing event listener:', error);
+            }
+        });
+        this.eventListeners = [];
+        
+        // Clear global 3Dmol viewers
+        if (typeof $3Dmol !== 'undefined' && $3Dmol.viewers) {
+            Object.keys($3Dmol.viewers).forEach(key => {
+                try {
+                    const viewer = $3Dmol.viewers[key];
+                    if (viewer && typeof viewer.clear === 'function') {
+                        viewer.clear();
+                    }
+                    delete $3Dmol.viewers[key];
+                } catch (error) {
+                    console.warn('Error clearing global viewer:', error);
+                }
+            });
+        }
+        
+        // Reset drag state
+        this.isDragging = false;
+        
+        // Clear molecule viewer cache
+        if (this.moleculeViewer && typeof this.moleculeViewer.clearCache === 'function') {
+            this.moleculeViewer.clearCache();
+        }
+        
+        console.log('Game cleanup completed');
     }
 }
 
