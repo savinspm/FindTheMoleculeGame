@@ -1,0 +1,14 @@
+[Unit]
+Description=Find the Candidate! local web server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/FindTheMoleculeGame/molecule-game-web
+ExecStart=/usr/bin/python3 nocache_server.py 8931
+Restart=on-failure
+RestartSec=2
+User=pi
+
+[Install]
+WantedBy=multi-user.target

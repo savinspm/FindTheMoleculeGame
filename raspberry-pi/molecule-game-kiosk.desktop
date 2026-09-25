@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Molecule Game Kiosk
+Exec=/home/pi/FindTheMoleculeGame/raspberry-pi/start-kiosk.sh
+X-GNOME-Autostart-enabled=true
