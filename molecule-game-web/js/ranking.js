@@ -4,10 +4,10 @@
 class Ranking {
     /**
      * Constructor
+     * @param {string} storageKey - LocalStorage key for this mode's rankings
      */
-    constructor() {
-        // Key for LocalStorage
-        this.storageKey = 'molecule_game_rankings';
+    constructor(storageKey = 'molecule_game_rankings') {
+        this.storageKey = storageKey;
     }
     
     /**

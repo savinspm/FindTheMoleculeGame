@@ -49,35 +49,6 @@
 .player-stats {
     font-size: var(--font-small);
 }
-@media (max-width: 992px) {
-    #welcome-screen {
-        flex-direction: column;
-        height: auto;
-        padding: 15px;
-        gap: 20px;
-    }
-    
-    .welcome-main-content {
-        flex: none;
-        order: 1;
-    }
-    
-    .welcome-ranking {
-        flex: none;
-        min-width: 0;
-        max-width: 100%;
-        order: 2;
-    }
-    
-    .welcome-ranking .ranking-sidebar {
-        max-height: 300px;
-    }
-    
-    .name-input input {
-        width: 90%;
-        max-width: 400px;
-    }
-}
 /* Cuadrícula 2x2 para moléculas */
 /* Responsive 2x2 grid: barra arriba 10%, grid 90% */
 .game-grid-2x2 {
@@ -93,7 +64,10 @@
     margin: 0;
     padding: 15px;
     box-sizing: border-box;
-    overflow: hidden;
+    /* Safety net: rows should fit exactly, but on an unusually short screen
+       this scrolls instead of letting cells overlap each other. */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 .grid-cell {
     /* Cada celda ocupa exactamente el tamaño asignado por la grid */
@@ -127,12 +101,19 @@
 .game-grid-2x2 .option-right {
     display: grid !important;
     place-items: stretch;
+    /* Without an explicit row track this defaults to "auto", which sizes to
+       content instead of the cell's real (definite) height. That let the
+       molecule's aspect-ratio box dictate its own oversized height on short
+       cells, overflowing into neighboring rows. */
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
 }
 
 .query-cell {
     grid-column: 1;
     grid-row: 1;
     min-width: 0; /* no fuerces la columna por el título */
+    position: relative; /* contains the absolutely-positioned mascot */
 }
 
 .option-cell {
@@ -146,6 +127,8 @@
 .query-molecule {
     border: 6px solid var(--blue);
     box-shadow: 0 0 24px var(--blue), 0 4px 16px rgba(0,0,0,0.10);
+    background-image: radial-gradient(rgba(22, 184, 243, 0.1) 2px, transparent 2px);
+    background-size: 22px 22px;
     width: 100%;
     height: auto; /* que el alto venga del aspecto */
     aspect-ratio: 16 / 9;
@@ -162,17 +145,18 @@
     max-height: 100%;
 }
 :root {
-    /* Colores - basados en la versión original */
-    --background: #7FDBFF; /* Azul cielo */
+    /* Paleta moderna y vistosa, pensada para niños */
+    --background: #BFEFFF; /* Azul cielo suave, para franjas/scroll */
+    --bg-gradient: linear-gradient(135deg, #6EE7F9 0%, #8B3DFF 55%, #FF6FB5 100%);
     --white: #FFFFFF;
-    --black: #222222;
-    --green: #2ECC40;
-    --red: #FF4136;
-    --yellow: #FFDC00;
-    --purple: #B10DC9;
-    --orange: #FF851B;
-    --pink: #FFB6C1;
-    --blue: #0074D9;
+    --black: #241E46; /* Índigo profundo en vez de negro puro: más amigable */
+    --green: #27C281;
+    --red: #FF5D73;
+    --yellow: #FFC94D;
+    --purple: #8B3DFF;
+    --orange: #FF9640;
+    --pink: #FF6FB5;
+    --blue: #16B8F3;
 
     /* Colores para átomos */
     --atom-h: #F0F0F0;
@@ -191,6 +175,52 @@
     --font-tiny: 0.7rem;
 }
 
+/* --- Supermolécula themes ---
+   Only the decorative brand colors change per theme (--purple/--blue/
+   --pink/--yellow/--orange/--background/--bg-gradient). --green and --red
+   stay fixed everywhere: the player learns "green = correct, red = wrong"
+   once and it must keep meaning that regardless of skin. --atom-* colors
+   are standard CPK coloring for real chemistry and never change either. */
+body.theme-rayo {
+    --background: #FFE9C7;
+    --bg-gradient: linear-gradient(135deg, #FFD84D 0%, #FF6A3D 55%, #E11D48 100%);
+    --purple: #E11D48;
+    --blue: #FFB400;
+    --pink: #FF6A3D;
+    --yellow: #FFD84D;
+    --orange: #FF8A3D;
+}
+
+body.theme-titan {
+    --background: #D6F5E8;
+    --bg-gradient: linear-gradient(135deg, #6EE7B7 0%, #0F9D58 55%, #064E3B 100%);
+    --purple: #0F9D58;
+    --blue: #00C9A7;
+    --pink: #34D399;
+    --yellow: #A7F3D0;
+    --orange: #059669;
+}
+
+body.theme-noir {
+    --background: #1A1A2E;
+    --bg-gradient: linear-gradient(135deg, #24243E 0%, #16213E 55%, #0F0C29 100%);
+    --purple: #FFC94D;
+    --blue: #FFD84D;
+    --pink: #706FD3;
+    --yellow: #FFC94D;
+    --orange: #E8B923;
+}
+
+body.theme-estrella {
+    --background: #DCE6FF;
+    --bg-gradient: linear-gradient(135deg, #93C5FD 0%, #4F8FFF 55%, #1E3A8A 100%);
+    --purple: #1E3A8A;
+    --blue: #4F8FFF;
+    --pink: #C0C6D4;
+    --yellow: #E5E7EB;
+    --orange: #6B8FCC;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -206,10 +236,18 @@ html, body {
 
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: var(--background);
+    background: var(--bg-gradient);
+    background-size: 300% 300%;
+    animation: gradientShift 18s ease infinite;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 #app {
@@ -235,7 +273,9 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease;
-    background-color: var(--background);
+    background: var(--bg-gradient);
+    background-size: 300% 300%;
+    animation: gradientShift 18s ease infinite;
 }
 
 .screen.active {
@@ -264,10 +304,14 @@ body {
 .welcome-main-content {
     flex: 1;
     text-align: center;
-    padding: 20px;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 32px;
+    box-shadow: 0 16px 40px rgba(36, 30, 70, 0.22);
+    margin: 20px 0;
 }
 
 /* Language Selector */
@@ -283,33 +327,35 @@ body {
 
 .language-label {
     font-size: var(--font-small);
-    color: var(--purple);
+    color: var(--white);
     font-weight: bold;
+    text-shadow: 0 2px 4px rgba(36, 30, 70, 0.35);
 }
 
 .language-button {
-    padding: 8px 16px;
-    border: 2px solid var(--purple);
+    padding: 8px 18px;
+    border: none;
     background-color: var(--white);
     color: var(--purple);
     border-radius: 20px;
     cursor: pointer;
     font-size: var(--font-small);
-    font-weight: bold;
-    transition: all 0.3s ease;
+    font-weight: 800;
+    box-shadow: 0 3px 0 rgba(139, 61, 255, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .language-button:hover {
     background-color: var(--purple);
     color: var(--white);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
 }
 
 .language-button.active {
-    background-color: var(--purple);
+    background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
     color: var(--white);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
 
 .welcome-ranking {
@@ -323,19 +369,167 @@ body {
 }
 
 #welcome-screen h1 {
-    font-size: var(--font-large);
+    /* Bigger than --font-large on purpose: this is the "read it from
+       across the room" attract-mode title, not body text. */
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
     color: var(--purple);
-    margin-bottom: 30px;
+    margin-bottom: 14px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+    /* em, not px: this scales with font-size, which shrinks a lot on
+       narrow/short screens. Fixed px offsets stayed full-size there and
+       made the title look like a blurry double-exposure. */
+    text-shadow:
+        0.075em 0.075em 0 var(--yellow),
+        0.15em 0.15em 0 var(--pink);
+}
+
+.hero-tagline {
+    font-size: var(--font-medium);
+    color: var(--black);
+    margin: 0 0 22px;
+    font-weight: 600;
+}
+
+.how-to-play-button {
+    background: var(--white);
+    color: var(--purple);
+    border: 2px solid #E4DEFF;
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-family: inherit;
+    font-size: var(--font-small);
+    font-weight: 800;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.how-to-play-button:hover {
+    transform: translateY(-2px);
+    background-color: #F8F6FF;
+    box-shadow: 0 4px 10px rgba(139, 61, 255, 0.2);
 }
 
 .instructions {
-    margin: 20px 0 40px;
-    line-height: 1.8;
+    margin: 4px 0 24px;
+    line-height: 1.7;
+    text-align: left;
 }
 
 .instructions p {
     font-size: var(--font-medium);
     color: var(--black);
+}
+
+/* --- How-to-play modal --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(24, 16, 48, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 300;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease;
+}
+
+.modal-card {
+    background: var(--white);
+    border-radius: 28px;
+    padding: 36px 32px 28px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(24, 16, 48, 0.35);
+    transform: scale(0.92) translateY(10px);
+    transition: transform 0.2s ease;
+}
+
+.modal-overlay.open .modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.modal-card h2 {
+    color: var(--purple);
+    font-size: var(--font-large);
+    margin: 0 0 12px;
+    font-weight: 900;
+    padding-right: 30px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #F0EDFF;
+    color: var(--purple);
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.modal-close:hover {
+    background: #E4DEFF;
+    transform: scale(1.08);
+}
+
+.modal-got-it {
+    display: block;
+    margin: 8px auto 0;
+    background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 999px;
+    padding: 12px 36px;
+    font-family: inherit;
+    font-size: var(--font-medium);
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(139, 61, 255, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.modal-got-it:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 61, 255, 0.45);
+}
+
+@media (max-height: 600px) and (max-width: 992px) {
+    .modal-card {
+        padding: 24px 20px 20px;
+    }
+    .modal-card h2 {
+        font-size: var(--font-medium);
+        margin-bottom: 6px;
+    }
+    .how-to-play-button {
+        margin-bottom: 10px;
+        padding: 6px 16px;
+    }
+    .hero-tagline {
+        margin-bottom: 8px;
+    }
 }
 
 .name-input {
@@ -350,32 +544,106 @@ body {
 
 .name-input input {
     width: 400px;
-    padding: 15px;
+    padding: 15px 20px;
     font-size: var(--font-medium);
-    border: 3px solid var(--black);
-    border-radius: 5px;
+    font-family: 'Nunito', sans-serif;
+    border: 3px solid #E4DEFF;
+    border-radius: 16px;
     outline: none;
+    background-color: #F8F6FF;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.name-input input:focus {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 4px rgba(139, 61, 255, 0.15);
+}
+
+/* Stack the welcome screen on smaller screens. This must come after the
+   base #welcome-screen/.welcome-main-content/.welcome-ranking/.name-input
+   input rules above, since equal-specificity rules are resolved by source
+   order regardless of the media query — placing it earlier in the file (as
+   it originally was) made it get silently overridden by those base rules. */
+@media (max-width: 992px) {
+    #welcome-screen {
+        flex-direction: column;
+        height: auto;
+        max-height: 100vh;
+        overflow-y: auto;
+        padding: 15px;
+        gap: 20px;
+    }
+
+    .welcome-main-content {
+        flex: none;
+        order: 1;
+    }
+
+    /* .language-selector is positioned absolute against #app (the full
+       page), not against this card. On a short card that sits near the
+       top of a short viewport, it used to float on top of the h1 title
+       instead of beside it. Flow it in-place above the title instead. */
+    .language-selector {
+        position: static;
+        justify-content: center;
+        margin-bottom: 12px;
+    }
+
+    .welcome-ranking {
+        flex: none;
+        min-width: 0;
+        max-width: 100%;
+        order: 2;
+    }
+
+    .welcome-ranking .ranking-sidebar {
+        max-height: 300px;
+    }
+
+    .name-input input {
+        width: 90%;
+        max-width: 400px;
+    }
 }
 
 #start-button {
     margin-top: 30px;
-    padding: 15px 30px;
+    padding: 16px 40px;
     font-size: var(--font-medium);
-    font-weight: bold;
-    background-color: var(--green);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    background: linear-gradient(135deg, var(--green) 0%, #16D9A0 100%);
     color: var(--white);
-    border: 3px solid var(--black);
-    border-radius: 15px;
+    border: none;
+    border-radius: 50px;
     cursor: pointer;
-    transition: all 0.3s;
+    box-shadow: 0 6px 0 #1B9A63, 0 10px 20px rgba(39, 194, 129, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-#start-button:hover {
-    transform: scale(1.05);
+#start-button:not(:disabled) {
+    animation: start-button-glow 1.8s ease-in-out infinite;
+}
+
+#start-button:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 9px 0 #1B9A63, 0 14px 24px rgba(39, 194, 129, 0.4);
+    animation: none;
+}
+
+@keyframes start-button-glow {
+    0%, 100% { box-shadow: 0 6px 0 #1B9A63, 0 10px 20px rgba(39, 194, 129, 0.35); }
+    50% { box-shadow: 0 6px 0 #1B9A63, 0 10px 34px rgba(39, 194, 129, 0.65); }
+}
+
+#start-button:active:not(:disabled) {
+    transform: translateY(1px) scale(0.99);
+    box-shadow: 0 2px 0 #1B9A63, 0 4px 10px rgba(39, 194, 129, 0.3);
 }
 
 #start-button:disabled {
-    background-color: #cccccc;
+    background: #D9D9E6;
+    box-shadow: none;
     cursor: not-allowed;
     transform: none;
 }
@@ -443,13 +711,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 0;
     margin-bottom: 18px;
     background: linear-gradient(90deg, var(--yellow) 0%, var(--pink) 100%);
-    border-radius: 18px;
-    padding: 18px;
-    border: 4px solid var(--blue);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border-radius: 24px;
+    padding: 18px 24px;
+    border: none;
+    box-shadow: 0 8px 20px rgba(36, 30, 70, 0.18);
 }
 
 .player-info {
@@ -469,10 +736,30 @@ body {
 
 .timer {
     font-size: 1.3rem;
-    color: var(--red);
+    /* Was var(--red) on a yellow->pink bar: red and pink sit too close in
+       hue and lightness to read as text, only as a border/glow. Dark text
+       (like the other stats) is legible against the whole gradient. */
+    color: var(--black);
     font-weight: bold;
     white-space: nowrap;
     text-shadow: 1px 1px 0 var(--white);
+    padding: 6px 14px;
+    border-radius: 16px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Real urgency cue for the last 10s, instead of permanently-red-but-
+   unreadable text: a solid red pill only appears once it matters. */
+.timer.timer-critical {
+    color: var(--white);
+    background-color: var(--red);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    animation: timer-pulse 1s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
 }
 
 .target-molecule-section, .options-section {
@@ -482,7 +769,9 @@ body {
 }
 
 .target-molecule-section h2, .options-section h2, .query-cell h2 {
-    color: var(--purple);
+    color: var(--white);
+    font-weight: 800;
+    text-shadow: 2px 2px 0 var(--purple), 0 3px 10px rgba(36, 30, 70, 0.25);
     font-size: calc(var(--font-large) * 0.9);
     margin-bottom: 18px;
     margin-top: 0;
@@ -512,7 +801,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: var(--white);
-    border-radius: 18px;
+    border-radius: 24px;
     margin: 0 auto;
     position: relative;
     box-shadow: 0 4px 16px rgba(0,0,0,0.10);
@@ -534,6 +823,8 @@ body {
 .molecule-choice {
     /* Ocupa todo el ancho/alto de la celda */
     display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     width: 100%;
     height: 100%;
     position: relative;
@@ -577,10 +868,12 @@ body {
     min-width: 240px; /* evitar colapso visual si no hay canvas */
     flex: 1 1 auto;
     background-color: var(--white);
+    background-image: radial-gradient(rgba(139, 61, 255, 0.08) 2px, transparent 2px);
+    background-size: 22px 22px;
     border: 6px solid var(--purple);
-    border-radius: 18px;
+    border-radius: 24px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
     position: relative;
     overflow: visible !important; /* Asegurar que el botón no se recorte */
 }
@@ -603,9 +896,9 @@ body {
         padding: 5px;
     }
     .select-button {
-        font-size: 0.9rem;
-        width: 32px;
-        height: 32px;
+        font-size: 1.1rem;
+        width: 48px;
+        height: 48px;
         padding: 0;
     }
 }
@@ -616,11 +909,11 @@ body {
         max-width: 180px !important;
     }
     .select-button {
-        font-size: 0.8rem;
-        width: 28px;
-        height: 28px;
+        font-size: 1rem;
+        width: 44px;
+        height: 44px;
         padding: 0;
-        border-width: 1px;
+        border-width: 2px;
     }
     .option-left .molecule-choice,
     .option-right .molecule-choice {
@@ -655,18 +948,18 @@ body {
 }
 
 .select-button {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     padding: 0;
     border-radius: 50%;
     font-weight: bold;
-    background-color: var(--blue);
+    background: linear-gradient(135deg, var(--blue) 0%, #3FD0FF 100%);
     color: var(--white);
-    border: 2px solid var(--black);
+    border: 3px solid var(--white);
     cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    width: 44px;
-    height: 44px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    box-shadow: 0 4px 10px rgba(36, 30, 70, 0.35);
+    width: 54px;
+    height: 54px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -691,9 +984,9 @@ body {
 }
 
 .select-button:hover {
-    transform: scale(1.1);
-    background-color: var(--green);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+    transform: scale(1.15);
+    background: linear-gradient(135deg, var(--green) 0%, #16D9A0 100%);
+    box-shadow: 0 6px 14px rgba(36, 30, 70, 0.4);
 }
 
 .select-button:active {
@@ -702,7 +995,7 @@ body {
 }
 
 .select-button:disabled {
-    background-color: #cccccc;
+    background: #D9D9E6;
     cursor: not-allowed;
     transform: none;
     opacity: 0.7;
@@ -712,15 +1005,34 @@ body {
     display: none !important;
 }
 
+/* Visual feedback on the molecule box itself, not just the text message
+   above/below the grid (which can be far from what the player was looking
+   at, especially on the stacked mobile/kiosk layout). */
+.correct-option {
+    border-color: var(--green) !important;
+    box-shadow: 0 0 0 6px rgba(39, 194, 129, 0.35), 0 4px 16px rgba(0,0,0,0.08) !important;
+    animation: pop 0.5s;
+}
+
+.incorrect-option {
+    border-color: var(--red) !important;
+    box-shadow: 0 0 0 6px rgba(255, 93, 115, 0.3), 0 4px 16px rgba(0,0,0,0.08) !important;
+    animation: shake 0.4s;
+}
+
 .correct {
     color: var(--green);
     font-size: 2rem;
+    font-weight: 800;
+    text-shadow: 0 2px 0 var(--white);
     animation: pop 0.5s;
 }
 
 .incorrect {
     color: var(--red);
     font-size: 2rem;
+    font-weight: 800;
+    text-shadow: 0 2px 0 var(--white);
     animation: shake 0.5s;
 }
 
@@ -848,33 +1160,45 @@ body {
 
 #game-over-screen h1 {
     font-size: var(--font-large);
-    color: var(--red);
+    color: var(--white);
     margin-bottom: 30px;
+    font-weight: 900;
+    /* em, not px: see the matching #welcome-screen h1 comment. */
+    text-shadow: 0.075em 0.075em 0 var(--red), 0.15em 0.15em 0 var(--purple);
 }
 
 #final-stats {
     font-size: var(--font-medium);
     margin: 20px 0 40px;
-    padding: 20px;
+    padding: 24px 32px;
     background-color: var(--white);
-    border-radius: 10px;
-    border: 2px solid var(--black);
+    border-radius: 24px;
+    border: none;
+    box-shadow: 0 12px 32px rgba(36, 30, 70, 0.25);
 }
 
 #play-again-button {
-    padding: 15px 30px;
+    padding: 16px 36px;
     font-size: var(--font-medium);
-    font-weight: bold;
-    background-color: var(--orange);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--yellow) 100%);
     color: var(--white);
-    border: 3px solid var(--black);
-    border-radius: 10px;
+    border: none;
+    border-radius: 50px;
     cursor: pointer;
-    transition: all 0.3s;
+    box-shadow: 0 6px 0 #C96A1F, 0 10px 20px rgba(255, 150, 64, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 #play-again-button:hover {
-    transform: scale(1.05);
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 9px 0 #C96A1F, 0 14px 24px rgba(255, 150, 64, 0.4);
+}
+
+#play-again-button:active {
+    transform: translateY(1px) scale(0.99);
+    box-shadow: 0 2px 0 #C96A1F, 0 4px 10px rgba(255, 150, 64, 0.3);
 }
 
 /* Estilos para elementos dentro de la visualización de moléculas */
@@ -920,26 +1244,31 @@ body {
     position: relative;
     width: 100% !important;
     height: 100% !important;
-    border-radius: 18px;
+    border-radius: 24px;
     overflow: hidden;
 }
 
 .viewer_3Dmoljs canvas {
     width: 100% !important;
     height: 100% !important;
-    border-radius: 18px;
+    border-radius: 24px;
 }
 
 /* Asegurar que los contenedores de moléculas mantienen su tamaño */
-.molecule-container.viewer_3Dmoljs, 
+.molecule-container.viewer_3Dmoljs,
 .molecule-option.viewer_3Dmoljs {
-    min-height: 200px;
+    /* Small floor so the 3Dmol canvas never inits at 0 height; the grid's
+       own row sizing (not this) determines the real size on tall screens. */
+    min-height: 60px;
     width: 100% !important;
     max-width: 100% !important;
 }
 
 /* Responsive */
 @media (max-width: 992px) {
+    .game-container {
+        width: 100%;
+    }
     .game-grid-2x2 {
         grid-template-columns: 1fr;
         grid-template-rows: repeat(4, 1fr);
@@ -948,10 +1277,10 @@ body {
         height: calc(90vh - 80px);
     }
     .grid-cell {
-        width: 90vw;
-        height: 22vh;
-        max-width: 90vw;
-        max-height: 22vh;
+        width: 100%;
+        /* height comes from the parent's grid-template-rows (1fr each) so the
+           4 rows always divide the available height evenly, however short. */
+        max-width: 100%;
     }
     .molecule-container, .query-molecule, .molecule-option {
         width: 90%;
@@ -1037,5 +1366,511 @@ body {
     
     .game-container {
         padding: 3px 5px;
+    }
+}
+
+/* Short, wide kiosk screens (e.g. a Raspberry Pi touchscreen at 800x480):
+   width-based breakpoints above don't catch these, since the width alone
+   looks "desktop-sized". Shrink the title bar and headings so the 2x2/
+   stacked molecule grid keeps most of the vertical space. */
+@media (max-height: 600px) {
+    .game-info {
+        padding: 8px 16px;
+        margin-bottom: 8px;
+    }
+    .player-info > div,
+    .timer {
+        font-size: 1rem;
+    }
+    .target-molecule-section h2,
+    .options-section h2,
+    .query-cell h2 {
+        font-size: var(--font-small);
+        margin-bottom: 4px;
+    }
+    .molecule-container.viewer_3Dmoljs,
+    .molecule-option.viewer_3Dmoljs {
+        min-height: 40px;
+    }
+}
+
+@media (max-height: 600px) and (max-width: 992px) {
+    .welcome-main-content {
+        padding: 16px;
+    }
+    #welcome-screen h1 {
+        font-size: var(--font-medium);
+        margin-bottom: 12px;
+    }
+    .instructions {
+        margin: 8px 0 16px;
+        line-height: 1.4;
+    }
+    .instructions p {
+        font-size: var(--font-small);
+    }
+    .language-selector {
+        margin-bottom: 6px;
+    }
+    .name-input {
+        margin: 8px 0;
+    }
+    .name-input label {
+        margin-bottom: 4px;
+    }
+    .name-input input {
+        padding: 8px 16px;
+    }
+    #start-button {
+        margin-top: 10px;
+        padding: 10px 40px;
+    }
+    .welcome-ranking {
+        padding-top: 0;
+    }
+}
+
+/* --- Mascot: a little atom character that reacts to right/wrong answers ---
+   Built as inline SVG (no image assets) so it stays fully offline-safe.
+   `translate`/`rotate` are used as their own CSS properties (not shorthand
+   `transform`) on anything that also needs a static `transform`, since the
+   two compose independently instead of one overwriting the other. */
+.mascot {
+    pointer-events: none;
+    user-select: none;
+}
+
+.mascot-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.mascot-welcome {
+    width: clamp(160px, 22vw, 300px);
+    height: clamp(160px, 22vw, 300px);
+    margin: 0 auto 4px;
+}
+
+.mascot-game {
+    /* Fixed to the viewport, not nested in the molecule grid, so it can be
+       big without fighting the grid's own sizing rules (a previous version
+       lived inside .query-cell and ".grid-cell > *" kept overriding its
+       width) and without shrinking the space available to the molecules. */
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: clamp(130px, 16vw, 320px);
+    height: clamp(130px, 16vw, 320px);
+    z-index: 50;
+    filter: drop-shadow(0 6px 14px rgba(36, 30, 70, 0.35));
+    transition: width 0.2s, height 0.2s;
+}
+
+.mascot-body,
+.mascot-ring,
+.mascot-face,
+.mascot-cheek {
+    animation: mascot-bob 2.6s ease-in-out infinite;
+}
+
+.mascot-body {
+    animation-name: mascot-bob, mascot-squash;
+    animation-duration: 2.6s, 2.6s;
+    animation-timing-function: ease-in-out, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+    transform-origin: 50px 65px;
+}
+
+.mascot-ring {
+    fill: none;
+    stroke: var(--blue);
+    stroke-width: 3.5;
+    opacity: 0.85;
+    transform-origin: 50px 50px;
+}
+
+.mascot-ring-1 {
+    transform: rotate(-18deg);
+}
+
+.mascot-ring-2 {
+    stroke: var(--pink);
+    transform: rotate(55deg);
+}
+
+.mascot-cheek {
+    fill: var(--pink);
+    opacity: 0.55;
+}
+
+.mascot-eye {
+    fill: var(--white);
+    animation: mascot-blink 4.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.mascot-pupil {
+    fill: var(--black);
+}
+
+.mascot-eye-glint {
+    fill: var(--white);
+}
+
+.mascot-brow {
+    fill: none;
+    stroke: var(--black);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    display: none;
+}
+
+.mascot-brow-idle-left,
+.mascot-brow-idle-right {
+    display: block;
+}
+
+.mascot.happy .mascot-brow-idle-left,
+.mascot.happy .mascot-brow-idle-right,
+.mascot.sad .mascot-brow-idle-left,
+.mascot.sad .mascot-brow-idle-right {
+    display: none;
+}
+
+.mascot.happy .mascot-brow-happy-left,
+.mascot.happy .mascot-brow-happy-right {
+    display: block;
+}
+
+.mascot.sad .mascot-brow-sad-left,
+.mascot.sad .mascot-brow-sad-right {
+    display: block;
+}
+
+.mascot-mouth {
+    fill: none;
+    stroke: var(--black);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    display: none;
+}
+
+.mascot-mouth-idle {
+    display: block;
+}
+
+.mascot.happy .mascot-mouth-idle,
+.mascot.sad .mascot-mouth-idle {
+    display: none;
+}
+
+.mascot.happy .mascot-mouth-happy {
+    display: block;
+    fill: var(--black);
+}
+
+.mascot.sad .mascot-mouth-sad {
+    display: block;
+}
+
+.mascot-tear {
+    fill: #5AC8FA;
+    opacity: 0;
+}
+
+.mascot.sad .mascot-tear {
+    animation: mascot-tear-drop 0.9s ease-in;
+}
+
+.mascot-sparkle {
+    fill: var(--yellow);
+    opacity: 0;
+    transform-origin: center;
+}
+
+.mascot.happy .mascot-sparkle-1 {
+    animation: mascot-sparkle-pop 0.7s ease;
+}
+
+.mascot.happy .mascot-sparkle-2 {
+    animation: mascot-sparkle-pop 0.7s ease 0.1s;
+}
+
+.mascot.happy {
+    animation: mascot-jump 0.7s ease;
+}
+
+.mascot.sad {
+    animation: mascot-wobble 0.6s ease;
+}
+
+@keyframes mascot-bob {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -3px; }
+}
+
+@keyframes mascot-squash {
+    0%, 100% { scale: 1 1; }
+    50% { scale: 1.03 0.97; }
+}
+
+@keyframes mascot-blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    96% { transform: scaleY(0.15); }
+}
+
+@keyframes mascot-jump {
+    0% { transform: translateY(0) rotate(0deg) scale(1); }
+    35% { transform: translateY(-18px) rotate(-10deg) scale(1.1); }
+    60% { transform: translateY(0) rotate(7deg) scale(0.95); }
+    100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+
+@keyframes mascot-wobble {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-5px) rotate(-6deg); }
+    50% { transform: translateX(5px) rotate(6deg); }
+    75% { transform: translateX(-3px) rotate(-3deg); }
+}
+
+@keyframes mascot-tear-drop {
+    0% { opacity: 0; translate: 0 0; }
+    20% { opacity: 1; translate: 0 0; }
+    100% { opacity: 0; translate: 0 10px; }
+}
+
+@keyframes mascot-sparkle-pop {
+    0% { opacity: 0; scale: 0.3; }
+    40% { opacity: 1; scale: 1.1; }
+    100% { opacity: 0; scale: 0.4; }
+}
+
+@media (max-height: 600px) and (max-width: 992px) {
+    .mascot-welcome {
+        display: none;
+    }
+
+    .mascot-game {
+        width: 84px;
+        height: 84px;
+        bottom: 4px;
+        right: 4px;
+    }
+}
+
+/* --- Theme picker (welcome screen) --- */
+.theme-picker {
+    margin: 0 0 18px;
+}
+
+.theme-picker-label {
+    font-size: var(--font-small);
+    font-weight: bold;
+    color: var(--black);
+    margin-bottom: 8px;
+}
+
+.theme-picker-options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.theme-option {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    font-family: inherit;
+}
+
+.theme-swatch {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid var(--white);
+    box-shadow: 0 3px 8px rgba(36, 30, 70, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.theme-option:hover .theme-swatch {
+    transform: translateY(-3px) scale(1.08);
+}
+
+.theme-option.active .theme-swatch {
+    box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--purple), 0 3px 8px rgba(36, 30, 70, 0.25);
+}
+
+.theme-option-name {
+    font-size: var(--font-tiny);
+    font-weight: bold;
+    color: var(--black);
+    max-width: 76px;
+    text-align: center;
+    line-height: 1.15;
+}
+
+@media (max-height: 600px) and (max-width: 992px) {
+    .theme-picker {
+        margin-bottom: 8px;
+    }
+    .theme-picker-label {
+        margin-bottom: 4px;
+    }
+    .theme-picker-options {
+        gap: 8px;
+    }
+    .theme-swatch {
+        width: 30px;
+        height: 30px;
+        border-width: 2px;
+    }
+    .theme-option-name {
+        display: none;
+    }
+}
+
+/* --- Background theme icons ---
+   Sit behind the welcome card / ranking panel / game grid: they're the
+   first child of the (already position:absolute, via .screen) screen, so
+   normal paint order puts every later, opaque sibling on top of them
+   without needing z-index. Generic comic motifs only (bolt, star, mask,
+   shield, fist, claw, moon, hex, atom) — never a specific character. */
+.bg-decor {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bg-icon-set {
+    display: none;
+}
+
+.bg-icon-classic {
+    display: block;
+}
+
+body.theme-rayo .bg-icon-classic { display: none; }
+body.theme-rayo .bg-icon-rayo { display: block; }
+body.theme-titan .bg-icon-classic { display: none; }
+body.theme-titan .bg-icon-titan { display: block; }
+body.theme-noir .bg-icon-classic { display: none; }
+body.theme-noir .bg-icon-noir { display: block; }
+body.theme-estrella .bg-icon-classic { display: none; }
+body.theme-estrella .bg-icon-estrella { display: block; }
+
+.bg-icon {
+    position: absolute;
+    width: clamp(90px, 13vw, 220px);
+    height: clamp(90px, 13vw, 220px);
+    fill: currentColor;
+    stroke: currentColor;
+    opacity: 0.16;
+}
+
+.bg-icon-1 {
+    top: 4%;
+    left: 3%;
+    color: var(--purple);
+    transform: rotate(-12deg);
+}
+
+.bg-icon-2 {
+    top: 8%;
+    right: 4%;
+    width: clamp(70px, 10vw, 170px);
+    height: clamp(70px, 10vw, 170px);
+    color: var(--blue);
+    transform: rotate(10deg);
+}
+
+.bg-icon-3 {
+    bottom: 6%;
+    left: 6%;
+    width: clamp(70px, 10vw, 170px);
+    height: clamp(70px, 10vw, 170px);
+    color: var(--blue);
+    transform: rotate(18deg);
+}
+
+.bg-icon-4 {
+    bottom: 4%;
+    right: 3%;
+    color: var(--purple);
+    transform: rotate(-8deg);
+}
+
+/* Keep icons out of the way on short kiosk screens: there is little spare
+   background there and the molecule grid already fills almost everything. */
+@media (max-height: 600px) {
+    .bg-icon {
+        opacity: 0.1;
+        width: clamp(60px, 10vw, 120px);
+        height: clamp(60px, 10vw, 120px);
+    }
+}
+
+/* --- Mascot chest emblem: only the classic (atom-ring) mascot keeps the
+   small belly badge. The other themes reshape the body itself instead
+   (below), so the emblem would be redundant/misplaced clutter. --- */
+.mascot-emblem-icon {
+    display: none;
+    fill: var(--white);
+    opacity: 0.95;
+}
+
+.mascot-emblem-classic {
+    display: block;
+}
+
+body.theme-rayo .mascot-emblem,
+body.theme-titan .mascot-emblem,
+body.theme-noir .mascot-emblem,
+body.theme-estrella .mascot-emblem {
+    display: none;
+}
+
+/* --- Mascot body shape: the round "ball" itself swaps for an icon
+   silhouette per theme (filled with the same gradient the circle used),
+   while the two orbit rings stay put behind it in every theme. Generic
+   comic shapes only, never a specific character. --- */
+.mascot-body-shape {
+    display: none;
+}
+
+body.theme-rayo .mascot-body,
+body.theme-titan .mascot-body,
+body.theme-noir .mascot-body,
+body.theme-estrella .mascot-body {
+    display: none;
+}
+
+body.theme-rayo .mascot-body-shape-rayo,
+body.theme-titan .mascot-body-shape-titan,
+body.theme-noir .mascot-body-shape-noir,
+body.theme-estrella .mascot-body-shape-estrella {
+    display: block;
+}
+
+/* Required attribution for the game-icons.net (CC BY 3.0) icon shapes. */
+.icon-credit {
+    margin-top: 12px;
+    font-size: 0.6rem;
+    color: var(--black);
+    opacity: 0.45;
+    text-align: center;
+}
+
+@media (max-height: 600px) and (max-width: 992px) {
+    .icon-credit {
+        margin-top: 4px;
+        font-size: 0.5rem;
     }
 }

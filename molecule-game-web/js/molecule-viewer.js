@@ -147,9 +147,9 @@ class MoleculeViewer {
                     moleculeData = await this.loadMoleculeFile(moleculePath);
                     this.moleculesCache[moleculePath] = moleculeData;
                 }
-                
+
                 // Create the 3D viewer with optimized configuration to avoid overlaps
-                const config = { 
+                const config = {
                     backgroundColor: 'white',
                     antialias: true,
                     outline: true, // Add outline for better visualization
@@ -160,134 +160,39 @@ class MoleculeViewer {
                     farSurface: 0.8 // Improve far surface visualization
                 };
                 const viewer = $3Dmol.createViewer(viewerElement, config);
-                
+
                 // Add the molecule to the viewer
                 const model = viewer.addModel(moleculeData, "mol2");
-                
-                // Make atoms clickable for better interaction and info display
-                model.setClickable({}, true, function(atom){ 
-                    const lang = window.language;
-                    const message = lang ? lang.getText('console.atomDetected') : 'Atom:';
-                    console.log(message, atom.elem, atom.serial);
-                });
-                
-                // Check if the molecule has multiple bonds (double or triple)
-                this.detectAndEnhanceMultipleBonds(model);
-                
-                // Apply separation factor to atoms to avoid overlaps
-                model.setClickable({}, true, function(atom){ 
-                    const lang = window.language;
-                    const message = lang ? lang.getText('console.atomDetected') : 'Atom:';
-                    console.log(message, atom.elem, atom.serial);
-                });
-                
-                // Determine if it's a complex molecule (more than 30 atoms)
-                const atomCount = model.selectedAtoms({}).length;
-                if (atomCount > 30) {
-                    // For complex molecules apply additional adjustments while maintaining good visualization
-                    viewer.setStyle({}, { 
-                        stick: { 
-                            radius: 0.12,     // Slightly thinner but visible sticks
-                            opacity: 0.85,    // Slightly more transparent to avoid visual saturation
-                            smoothness: 5     // Less smoothing for better performance
-                        }
-                    });
-                    viewer.setStyle({elem: 'H'}, { 
-                        sphere: { 
-                            radius: 0.15,     // Smaller hydrogens
-                            opacity: 0.85     // Transparency to improve visibility
-                        } 
-                    });
-                    const lang = window.language;
-                    const complexMessage = lang ? lang.getText('console.complexMolecule') : 'Complex molecule detected';
-                    const atomsMessage = lang ? lang.getText('console.atomsApplyingAdjustments') : 'atoms. Applying additional adjustments.';
-                    console.log(`${complexMessage} (${atomCount} ${atomsMessage}`);
-                }
-                
-                // RANDOM ROTATION SYSTEM
-                // ===============================
-                // Applies random rotations to each molecule so they all have different orientations
-                // Each molecule will have the same initial rotation (deterministic) but will be different from the others
-                
-                // Create a unique seed based on the molecule path and container
-                const moleculeHash = this.simpleHash(moleculePath);
-                const containerHash = this.simpleHash(containerId);
-                const combinedSeed = moleculeHash + containerHash * 777; // Prime factor for better distribution
-                
-                // Create deterministic pseudo-random generator
-                const randomGen = new PseudoRandom(combinedSeed);
-                
-                // Generate random rotations for each axis (0-360 degrees)
-                const rotationX = randomGen.randomFloat(0, 360);
-                const rotationY = randomGen.randomFloat(0, 360); 
-                const rotationZ = randomGen.randomFloat(0, 360);
-                
-                // Apply rotations before rendering (similar to the provided example)
-                viewer.rotate(rotationX, 'x');
-                viewer.rotate(rotationY, 'y'); 
-                viewer.rotate(rotationZ, 'z');
-                
-                const lang = window.language;
-                const rotationMessage = lang ? lang.getText('console.rotationApplied') : 'Rotation applied to';
-                console.log(`${rotationMessage} ${containerId}: X=${rotationX.toFixed(1)}°, Y=${rotationY.toFixed(1)}°, Z=${rotationZ.toFixed(1)}°`);
-                
-                // Configure improved visualization styles for better atom and bond visualization
-                
-                // Apply stick-and-ball visualization for all atoms (hybrid style)
-                viewer.setStyle({}, { 
-                    stick: { 
-                        radius: 0.15, // Bond radius (sticks)
-                        opacity: 0.9, // Slight transparency for better visualization
-                        color: 'grey', // Base color for bonds
-                        smoothness: 10 // Greater smoothness for bonds
-                    },
-                    sphere: { 
-                        scale: 0.3, // Global scale for spheres
-                        opacity: 0.9 // Slight transparency for better visualization
-                    }
-                });
-                
-                // Specific configuration by atom type
-                viewer.setStyle({elem: 'C'}, { sphere: { color: this.atomColors['C'], radius: 0.35 } });
-                viewer.setStyle({elem: 'O'}, { sphere: { color: this.atomColors['O'], radius: 0.35 } });
-                viewer.setStyle({elem: 'N'}, { sphere: { color: this.atomColors['N'], radius: 0.35 } });
-                viewer.setStyle({elem: 'S'}, { sphere: { color: this.atomColors['S'], radius: 0.4 } });
-                viewer.setStyle({elem: 'P'}, { sphere: { color: this.atomColors['P'], radius: 0.4 } });
-                viewer.setStyle({elem: 'H'}, { sphere: { color: this.atomColors['H'], radius: 0.18 } });
-                
-                // Adjust the view with a higher zoom factor for better visualization
-                viewer.zoomTo();
-                viewer.zoom(1.2); // Increase zoom so molecules appear larger
-                viewer.render();
-                
+                this._applyModelStyle(viewer, model, moleculePath, containerId);
+
                 // Enable mouse rotation
                 let isDragging = false;
                 let previousX, previousY;
-                
+
                 viewerElement.addEventListener('mousedown', (e) => {
                     isDragging = true;
                     previousX = e.clientX;
                     previousY = e.clientY;
                 });
-                
+
                 document.addEventListener('mousemove', (e) => {
                     if (isDragging) {
                         const deltaX = e.clientX - previousX;
                         const deltaY = e.clientY - previousY;
-                        
+
                         viewer.rotate(deltaX / 5, 'y');
                         viewer.rotate(deltaY / 5, 'x');
                         viewer.render();
-                        
+
                         previousX = e.clientX;
                         previousY = e.clientY;
                     }
                 });
-                
+
                 document.addEventListener('mouseup', () => {
                     isDragging = false;
                 });
-                
+
                 // Handle wheel events for zoom
                 viewerElement.addEventListener('wheel', (e) => {
                     e.preventDefault();
@@ -295,14 +200,15 @@ class MoleculeViewer {
                     viewer.zoom(delta);
                     viewer.render();
                 });
-                
+
                 return {
                     viewer: viewer,
                     model: model,
                     element: viewerElement,
-                    moleculeName: moleculeName
+                    moleculeName: this.getMoleculeName(moleculePath),
+                    containerId: containerId
                 };
-                
+
             } catch (error) {
                 const lang = window.language;
                 const errorMessage = lang ? lang.getText('console.errorCreatingViewer') : 'Error creating viewer for';
@@ -317,6 +223,61 @@ class MoleculeViewer {
         }
     }
     
+    /**
+     * Applies the shared bond/atom styling and a deterministic random
+     * rotation to a freshly-added model.
+     * @param {Object} viewer - The 3Dmol.js viewer
+     * @param {Object} model - The model just added to it
+     * @param {string} moleculePath - Path to the molecule file (used for the rotation seed)
+     * @param {string} containerId - Container id (used for the rotation seed)
+     */
+    _applyModelStyle(viewer, model, moleculePath, containerId) {
+        model.setClickable({}, true, function(atom){
+            const lang = window.language;
+            const message = lang ? lang.getText('console.atomDetected') : 'Atom:';
+            console.log(message, atom.elem, atom.serial);
+        });
+
+        // Check if the molecule has multiple bonds (double or triple)
+        this.detectAndEnhanceMultipleBonds(model);
+
+        // Determine if it's a complex molecule (more than 30 atoms)
+        const atomCount = model.selectedAtoms({}).length;
+        if (atomCount > 30) {
+            viewer.setStyle({}, {
+                stick: { radius: 0.12, opacity: 0.85, smoothness: 5 }
+            });
+            viewer.setStyle({elem: 'H'}, {
+                sphere: { radius: 0.15, opacity: 0.85 }
+            });
+        }
+
+        // Deterministic-but-different rotation per molecule/container pair
+        const moleculeHash = this.simpleHash(moleculePath);
+        const containerHash = this.simpleHash(containerId);
+        const combinedSeed = moleculeHash + containerHash * 777;
+        const randomGen = new PseudoRandom(combinedSeed);
+        viewer.rotate(randomGen.randomFloat(0, 360), 'x');
+        viewer.rotate(randomGen.randomFloat(0, 360), 'y');
+        viewer.rotate(randomGen.randomFloat(0, 360), 'z');
+
+        // Stick-and-ball visualization for all atoms (hybrid style)
+        viewer.setStyle({}, {
+            stick: { radius: 0.15, opacity: 0.9, color: 'grey', smoothness: 10 },
+            sphere: { scale: 0.3, opacity: 0.9 }
+        });
+        viewer.setStyle({elem: 'C'}, { sphere: { color: this.atomColors['C'], radius: 0.35 } });
+        viewer.setStyle({elem: 'O'}, { sphere: { color: this.atomColors['O'], radius: 0.35 } });
+        viewer.setStyle({elem: 'N'}, { sphere: { color: this.atomColors['N'], radius: 0.35 } });
+        viewer.setStyle({elem: 'S'}, { sphere: { color: this.atomColors['S'], radius: 0.4 } });
+        viewer.setStyle({elem: 'P'}, { sphere: { color: this.atomColors['P'], radius: 0.4 } });
+        viewer.setStyle({elem: 'H'}, { sphere: { color: this.atomColors['H'], radius: 0.18 } });
+
+        viewer.zoomTo();
+        viewer.zoom(1.2);
+        viewer.render();
+    }
+
     /**
      * Creates a simplified 2D view when 3Dmol.js is not available
      * @param {HTMLElement} container - Container element
@@ -461,17 +422,13 @@ class MoleculeViewer {
      */
     async loadMoleculeFile(moleculePath) {
         try {
-            // Ensure the path is correct
-            let adjustedPath = moleculePath;
-            if (!adjustedPath.startsWith('data/')) {
-                adjustedPath = 'data/' + adjustedPath;
-            }
-            
+            // The caller is responsible for passing a path that resolves
+            // correctly from index.html, so we fetch it as-is.
             const lang = window.language;
             const loadingMsg = lang ? lang.getText('console.loadingMolecule') : 'Loading molecule from';
-            console.log(`${loadingMsg}: ${adjustedPath}`);
-            
-            const response = await fetch(adjustedPath);
+            console.log(`${loadingMsg}: ${moleculePath}`);
+
+            const response = await fetch(moleculePath);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -517,6 +474,10 @@ USER_CHARGES
      */
     detectAndEnhanceMultipleBonds(model) {
         try {
+            // Not available on all 3Dmol.js model versions; the extra bond
+            // styling is purely decorative, so just skip it when absent.
+            if (typeof model.getBonds !== 'function') return;
+
             // Get all bonds from the model
             const bonds = model.getBonds();
             if (!bonds || bonds.length === 0) return;

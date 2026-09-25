@@ -20,29 +20,39 @@ class Language {
         this.translations = {
             en: {
                 // Welcome screen
-                welcomeTitle: 'FIND THE MOLECULE!',
-                welcomeSubtitle: 'Hello! Welcome to the molecule game',
-                instructions1: 'You have to find the correct molecule',
+                welcomeTitle: 'FIND THE CANDIDATE!',
+                welcomeSubtitle: 'Spot the winning molecule before time runs out!',
+                howToPlayButton: '❓ How to play',
+                howToPlayTitle: 'How to play',
+                instructions1: 'Pick the candidate most similar to the reference molecule (real ECFP4/Tanimoto similarity — the same method LBVS software uses to screen compound libraries)',
                 instructions2: 'You have 1 minute to get as many right as possible!',
                 instructions3: 'Enter your name and press the button to start',
+                gotIt: 'Got it!',
                 nameLabel: 'Your name:',
                 namePlaceholder: 'Enter your name',
                 startButton: 'START!',
                 ranking: 'RANKING',
                 noRankings: 'No data yet',
                 language: 'Language',
-                
+                themePickerLabel: 'Choose your Super-Molecule:',
+                themeClassicName: 'Classic',
+                themeRayoName: 'Crimson Bolt',
+                themeTitanName: 'Emerald Titan',
+                themeNoirName: 'Night Guardian',
+                themeEstrellaName: 'Steel Star',
+
                 // Game screen
-                findMolecule: 'Find:',
+                findMolecule: 'Reference:',
                 playerLabel: 'Player:',
                 scoreLabel: 'Hits:',
                 attemptsLabel: 'Attempts:',
                 accuracyLabel: 'Accuracy:',
                 timeLabel: 'Time:',
                 rotateHint: '↻ Click and drag to rotate',
-                
+
                 // Feedback messages
                 correct: 'Correct!',
+                correctWithScore: 'Correct! Real Tanimoto similarity: {score}',
                 incorrect: 'Incorrect. Try again!',
                 timeUp: 'Time\'s up!',
                 loadingLevel: 'Loading level...',
@@ -122,29 +132,39 @@ class Language {
             },
             es: {
                 // Welcome screen
-                welcomeTitle: '¡ENCUENTRA LA MOLÉCULA!',
-                welcomeSubtitle: '¡Hola! Bienvenido al juego de moléculas',
-                instructions1: 'Tienes que encontrar la molécula correcta',
+                welcomeTitle: '¡ENCUENTRA EL CANDIDATO!',
+                welcomeSubtitle: '¡Encuentra la molécula ganadora antes de que se acabe el tiempo!',
+                howToPlayButton: '❓ Cómo se juega',
+                howToPlayTitle: 'Cómo se juega',
+                instructions1: 'Elige la candidata más parecida químicamente a la referencia (similitud real ECFP4/Tanimoto: el mismo método que usa el software de LBVS para cribar bibliotecas de compuestos)',
                 instructions2: '¡Tienes 1 minuto para acertar todas las posibles!',
                 instructions3: 'Escribe tu nombre y presiona el botón para empezar',
+                gotIt: '¡Entendido!',
                 nameLabel: 'Tu nombre:',
                 namePlaceholder: 'Ingresa tu nombre',
                 startButton: '¡COMENZAR!',
                 ranking: 'RANKING',
                 noRankings: 'No hay datos todavía',
                 language: 'Idioma',
-                
+                themePickerLabel: 'Elige tu Supermolécula:',
+                themeClassicName: 'Clásico',
+                themeRayoName: 'Rayo Carmesí',
+                themeTitanName: 'Titán Esmeralda',
+                themeNoirName: 'Guardián Nocturno',
+                themeEstrellaName: 'Estrella de Acero',
+
                 // Game screen
-                findMolecule: 'Encuentra:',
+                findMolecule: 'Referencia:',
                 playerLabel: 'Jugador:',
                 scoreLabel: 'Aciertos:',
                 attemptsLabel: 'Intentos:',
                 accuracyLabel: 'Precisión:',
                 timeLabel: 'Tiempo:',
                 rotateHint: '↻ Haz clic y arrastra para girar',
-                
+
                 // Feedback messages
                 correct: '¡Correcto!',
+                correctWithScore: '¡Correcto! Similitud Tanimoto real: {score}',
                 incorrect: 'Incorrecto. ¡Inténtalo de nuevo!',
                 timeUp: '¡Se acabó el tiempo!',
                 loadingLevel: 'Cargando nivel...',
@@ -319,7 +339,20 @@ class Language {
         this.updateElementAttribute('#player-name', 'placeholder', this.getText('namePlaceholder'));
         this.updateElementText('#start-button', this.getText('startButton'));
         this.updateElementText('#ranking-title', this.getText('ranking'));
-        
+
+        // Update theme picker
+        this.updateElementText('#theme-picker-label', this.getText('themePickerLabel'));
+        this.updateElementText('#theme-name-classic', this.getText('themeClassicName'));
+        this.updateElementText('#theme-name-rayo', this.getText('themeRayoName'));
+        this.updateElementText('#theme-name-titan', this.getText('themeTitanName'));
+        this.updateElementText('#theme-name-noir', this.getText('themeNoirName'));
+        this.updateElementText('#theme-name-estrella', this.getText('themeEstrellaName'));
+
+        // Update how-to-play modal
+        this.updateElementText('#how-to-play-button', this.getText('howToPlayButton'));
+        this.updateElementText('#how-to-play-title', this.getText('howToPlayTitle'));
+        this.updateElementText('#how-to-play-got-it', this.getText('gotIt'));
+
         // Update game screen
         this.updateElementText('#find-label', this.getText('findMolecule') + ' ');
         
@@ -346,7 +379,7 @@ class Language {
             const rotateHint = this.getText('rotateHint');
             viewer.setAttribute('data-rotate-hint', rotateHint);
         });
-        
+
         // Update language buttons
         this.updateLanguageButtons();
     }

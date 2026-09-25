@@ -3,39 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Find the Molecule!</title>
-    <!-- Fuentes de Google -->
+    <title id="page-title">Find the Candidate!</title>
     <link href="css/css2.css" rel="stylesheet">
-    <!-- Biblioteca 3Dmol.js para visualización de moléculas 3D -->
     <script src="js/3Dmol-min.js"></script>
     <script src="js/3Dmol.ui-min.js"></script>
-    <!-- Hoja de estilos CSS -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=16">
 </head>
 <body>
+    <!-- Generic comic-style icon shapes, reused via <use>. Deliberately not
+         tied to any specific character/brand (no logos, no character
+         silhouettes) — just archetypal comic motifs (bolt, star, mask...)
+         that match each Super-Molecule theme. -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <!-- Icon shapes courtesy of game-icons.net (CC BY 3.0) — Lorc
+                 (fist, domino-mask), Delapouite (claws), Skoll (molecule),
+                 and the badges set (bolt, star, shield, sun, moon). See the
+                 credit line on the welcome screen. Two shapes (speed lines,
+                 hexagon) are plain geometry, drawn directly. -->
+            <symbol id="ic-bolt" viewBox="0 0 256 256"><path d="M101.265 58.881h53.377l-28.835 51.29 53.1 5.232-78.643 81.716 24.95-62.497-48.121-5.661z"/></symbol>
+            <symbol id="ic-spark" viewBox="0 0 100 100"><path d="M50.0,10.0 L52.8,39.4 L70.0,15.4 L57.8,42.2 L84.6,30.0 L60.6,47.2 L90.0,50.0 L60.6,52.8 L84.6,70.0 L57.8,57.8 L70.0,84.6 L52.8,60.6 L50.0,90.0 L47.2,60.6 L30.0,84.6 L42.2,57.8 L15.4,70.0 L39.4,52.8 L10.0,50.0 L39.4,47.2 L15.4,30.0 L42.2,42.2 L30.0,15.4 L47.2,39.4 Z"/></symbol>
+            <symbol id="ic-speed" viewBox="0 0 24 24"><g stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M1 7 H15"/><path d="M1 12 H21"/><path d="M1 17 H12"/></g></symbol>
+            <symbol id="ic-burst" viewBox="0 0 256 256"><path d="M128 53.346l8.997 46.964 34.883-32.706-20.325 43.283L199 104.93 157.115 128 199 151.07l-47.445-5.957 20.325 43.283-34.883-32.706L128 202.654l-8.997-46.964-34.883 32.706 20.325-43.283L57 151.07 98.885 128 57 104.93l47.445 5.957L84.12 67.604l34.883 32.706z"/></symbol>
+            <symbol id="ic-star" viewBox="0 0 256 256"><path d="M128 53.524l-17.354 51.819-54.646.492 43.92 32.518-16.418 52.123L128 158.754l44.498 31.722-16.418-52.123L200 105.835l-54.646-.492z"/></symbol>
+            <symbol id="ic-moon" viewBox="0 0 256 256"><path d="M128 55a73 73 0 0 0-38.64 11.113A64 64 0 0 1 105.5 64a64 64 0 0 1 64 64 64 64 0 0 1-64 64 64 64 0 0 1-16.09-2.137A73 73 0 0 0 128 201a73 73 0 0 0 73-73 73 73 0 0 0-73-73z"/></symbol>
+            <symbol id="ic-mask" viewBox="0 0 512 512"><path d="M413.28 123.063C366.787 123.317 306.08 143 255.845 143c-56.868 0-124.174-23.704-171-19.156-23.414 2.274-40.642 10.16-52.28 30.937-11.64 20.78-17.23 56.337-10.97 113.19 8.578 77.917 73.225 118.973 128.656 99.405 11.513-4.064 30.972-25.256 49-46.125 9.014-10.434 17.993-20.687 27.03-28.72 9.04-8.03 18.23-14.624 29.564-14.624 11.335 0 20.493 6.594 29.53 14.625 9.04 8.033 18.018 18.286 27.032 28.72 18.028 20.87 37.487 42.06 49 46.125 55.45 19.574 118.93-21.672 128.688-99.563 7.137-56.986 1.753-92.528-9.938-113.28-11.69-20.754-29.346-28.665-53.22-30.907-2.983-.28-6.05-.46-9.186-.53-1.47-.035-2.97-.04-4.47-.032zM135.064 181.72c22.378-.2 44.746 10.556 67.125 30.78-43.4 54.67-108.488 37.044-130.188 0 21.022-20.738 42.04-30.594 63.063-30.78zm234.625 0c.7-.016 1.394-.007 2.093 0 21.023.186 42.073 10.042 63.095 30.78-21.7 37.044-86.82 54.67-130.22 0 21.68-19.592 43.354-30.312 65.033-30.78z"/></symbol>
+            <symbol id="ic-shield" viewBox="0 0 256 256"><path d="M64 94l64-38 64 38c0 32-48 108-64 108-16 .25-64-76-64-108z"/></symbol>
+            <symbol id="ic-claw" viewBox="0 0 512 512"><path d="M134.3 25c-3.4 4.84-16.5 23.75-33.3 50.76-19.11 30.74-40.34 68.54-48.59 94.44-5.1 16-8.12 43.7-9.54 66.8-.16 2.5-.26 4.7-.38 7 3.37-1.1 6.84-1.6 10.37-1.7 6.1-.2 12.37.8 18.5 2.4 12.25 3.2 24.54 9.1 35.74 15.5 2.3 1.3 4.5 2.6 6.7 3.9 1.1-1.2 2.3-2.3 3.5-3.6 17.3-17.8 36.7-40.5 44.6-56.3h.1c7.8-15.7 25-52.2 39.2-90.1 12.5-33.31 22.1-68.58 22.3-89.1h-89.2zm154.2 0c.2 20.52 9.8 55.79 22.3 89.1 14.2 37.9 31.4 74.4 39.2 90.1h.1c7.9 15.8 27.3 38.5 44.6 56.3 1.2 1.3 2.4 2.4 3.5 3.6 2.2-1.3 4.4-2.6 6.7-3.9 11.2-6.4 23.5-12.3 35.7-15.5 6.1-1.6 12.4-2.6 18.5-2.4 3.5.1 7.1.7 10.5 1.7-.2-2.3-.3-4.5-.4-7-1.5-23.1-4.5-50.8-9.6-66.8-8.3-25.9-29.5-63.7-48.6-94.44-16.8-27.01-29.9-45.92-33.3-50.76h-89.2zM53.66 260.4c-3.79.1-6.97.8-9.4 2.2-5.7 3.3-10.44 10.8-13.52 21.7-3.07 10.9-4.36 24.6-4.53 37.8-.09 6.3.04 12 .28 17.2 32.82-26.6 60.25-44.6 85.41-55-4.1-2.7-8.6-5.6-13.74-8.5-10.34-5.9-21.56-11.1-31.38-13.7-4.3-1.1-8.21-1.7-11.67-1.7h-1.45zm403.14 0c-3.4 0-7.3.6-11.6 1.7-9.8 2.6-21 7.8-31.4 13.7-5.1 2.9-9.7 5.8-13.8 8.4 25.2 10.5 52.7 28.5 85.5 55.2.3-5.3.4-11 .3-17.3-.2-13.2-1.4-26.9-4.5-37.8-3.1-10.9-7.9-18.4-13.6-21.7-2.4-1.4-5.6-2.1-9.4-2.2h-1.5zm-303.4 31c-35.5 4.3-75.8 27.2-136.11 79.2 1.3 11.5 8.39 22.3 16.35 34.3 38.19-37.8 99.06-75.4 156.06-91.6-10.9-10.9-21.3-19.7-36.3-21.9zm205.2 0c-15 2.2-25.4 11-36.3 21.9 57 16.2 117.9 53.8 156 91.6 8-12 15.1-22.8 16.4-34.3-60.3-52-100.6-74.9-136.1-79.2zm-164.3 39.3c-22.7 6.6-46.7 17.1-69.4 29.8 28.6 12.4 52.3 34.6 69.3 59.2 16.3 23.4 27.3 48.8 30.6 71.6 10.8-25.1 15.2-59 9.6-90.2-4-22.3-12.8-43-26.3-58.1-4.1-4.6-8.7-8.7-13.8-12.3zm123.4 0c-5.1 3.6-9.7 7.7-13.8 12.3-13.5 15.1-22.3 35.8-26.3 58.1-5.6 31.2-1.2 65.1 9.6 90.2 3.3-22.8 14.3-48.2 30.6-71.6 17-24.6 40.7-46.8 69.4-59.2-22.8-12.7-46.8-23.2-69.5-29.8zm-212.8 41.6c-19.8 12.5-37.97 26.2-52.75 39.9 9.16 18.9 29.92 42 57.25 58.6 28.1 17 62 27.5 95.6 23.8-25.6-13.6-47.8-33.8-65.2-56.4-16.1-20.8-28-43.7-34.9-65.9zm302.2 0c-6.9 22.2-18.8 45.1-34.9 65.9-17.4 22.6-39.6 42.8-65.2 56.4 33.6 3.7 67.5-6.8 95.6-23.8 27.3-16.6 48.1-39.6 57.3-58.6-14.8-13.6-33-27.4-52.8-39.9z"/></symbol>
+            <symbol id="ic-fist" viewBox="0 0 512 512"><path d="M227.227 21.777c-1.845 0-3.704.05-5.567.157-15.314.875-30.76 5.305-39.494 10.863l-.008 73.15c2.884-.094 5.777-.147 8.676-.142 23.382.036 47.104 3.286 68.47 9.513l.01-87.507c-7.034-3.518-19.178-6.03-32.087-6.033zm80.74 9.16c-11.925.15-23.077 2.364-29.967 5.596l-.008 77.602v7.658c38.486 15.67 64.814 42.48 58.735 78.764l-.96 5.73-5.562 1.674c-17.45 5.253-34.872 9.703-52.225 13.335V246.53c25.562-.704 51.327-2.687 77.145-6.098l.02-197.928c-8.284-5.563-23.508-10.243-38.842-11.328-2.792-.198-5.584-.273-8.336-.238zM143.223 46.294c-1.176-.015-2.374-.01-3.588.02-4.175.1-8.533.468-12.903 1.152-15.67 2.454-31.477 8.565-40.406 15.402l-.01 72.955c18.808-15.81 46.704-25.143 77.15-28.54l.007-57.966c-4.82-1.752-12.018-2.916-20.25-3.023zm258.394 3.46c-10.804.117-20.722 1.93-27.043 4.655l-.02 183.182c25.074-4.02 50.16-9.412 75.122-16.358l1.99-158.447c-8.352-5.9-23.648-11.025-39.05-12.553-3.698-.366-7.398-.517-11-.478zm-222.775 74.202c-53.72.702-101.407 20.365-97.887 66.6 15.836-3.918 30.84-5.893 44.94-6.1 34.84-.51 64.213 9.704 87.318 27.613 34.608-3.11 69.852-10 105.412-20.314.14-41.287-74.098-68.657-139.783-67.8zm-48.877 78.65c-1.296-.003-2.603.012-3.92.045-17.256.436-36.45 4.03-57.566 11.037 5.79 53.808 26.325 106.41 58.5 143.346 6.226 7.15 12.856 13.712 19.875 19.615 29.303 9.282 69.26 12.917 110.534 12.14 3.777-55.805-8.717-108.357-36.193-142.74-21.265-26.61-51.064-43.39-91.232-43.444zm129.326 22.282c-9.358 1.637-18.69 3.016-27.995 4.15 1.54 1.74 3.043 3.52 4.502 5.346 3.146 3.937 6.094 8.062 8.873 12.334 9.916.144 19.868.125 29.857-.106H259.29v-21.723zm191.817 15.343c-65.406 17.826-131.462 25.41-195.85 25.315 16.998 35.144 23.828 78.093 21.013 122.6 42.482-2.08 85.03-8.23 118.187-15.983 26.693-32.78 47.37-77.118 56.65-131.932zM400.51 389.9c-38.334 9.145-87.95 16.056-136.873 17.454-47.67 1.36-94.336-2.228-129.448-15.262l-.01 78.93c27.187 12.568 76.414 20.205 127.318 20.298 51.224.094 104.214-7.173 139-20.773l.012-80.647z"/></symbol>
+            <symbol id="ic-hex" viewBox="0 0 24 24"><path fill="none" stroke-width="2" d="M12 1.5 L21.5 7 V17 L12 22.5 L2.5 17 V7 Z"/></symbol>
+            <symbol id="ic-atom" viewBox="0 0 512 512"><path d="M132.172 157.504a155.154 155.154 0 0 0-18.296 21.698 99.274 99.274 0 1 1 186.291-53.827 153.447 153.447 0 0 0-58.134-12.138h-1.982a152.767 152.767 0 0 0-107.879 44.267zm105.97 263.021A153.877 153.877 0 0 1 93.014 311.583a99.286 99.286 0 1 0 162.84 108.154 155.965 155.965 0 0 1-15.719.8h-1.981zm125.101-231.262h-1.098a84.642 84.642 0 0 0-1.05 169.272h1.098a84.642 84.642 0 0 0 1.05-169.272zm-104.8 83.317a103.834 103.834 0 0 1 78.317-99.286 134.136 134.136 0 0 0-94.942-40.96h-1.743a134.566 134.566 0 0 0-1.67 269.107h1.742a133.993 133.993 0 0 0 85.31-30.53 103.917 103.917 0 0 1-67.014-98.33z"/></symbol>
+        </defs>
+    </svg>
+
     <div id="app">
-        <!-- Pantalla de Bienvenida -->
+        <!-- Welcome screen -->
         <div id="welcome-screen" class="screen active">
+            <!-- Purely decorative theme background icons, painted behind the
+                 card/ranking panel (they're first in the DOM and opaque, so
+                 they naturally paint over this without any z-index games).
+                 pointer-events:none, hidden from screen readers. -->
+            <div class="bg-decor" aria-hidden="true">
+                <div class="bg-icon-set bg-icon-classic">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-atom"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-star"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-atom"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-hex"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-rayo">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-bolt"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-speed"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-bolt"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-burst"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-titan">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-fist"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-claw"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-burst"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-claw"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-noir">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-mask"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-moon"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-star"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-mask"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-estrella">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-shield"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-star"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-hex"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-star"></use></svg>
+                </div>
+            </div>
             <div class="welcome-main-content">
-                <!-- Language Selector -->
                 <div class="language-selector">
                     <span class="language-label">Language / Idioma:</span>
                     <button id="lang-en" class="language-button">English</button>
                     <button id="lang-es" class="language-button">Español</button>
                 </div>
-                
-                <h1 id="welcome-title">FIND THE MOLECULE!</h1>
-                <div class="instructions">
-                    <p id="welcome-subtitle">Hello! Welcome to the molecule game</p>
-                    <p id="instructions-1">You have to find the correct molecule</p>
-                    <p id="instructions-2">You have 1 minute to get as many right as possible!</p>
-                    <p id="instructions-3">Enter your name and press the button to start</p>
+
+                <div class="mascot mascot-welcome" aria-hidden="true">
+                    <svg class="mascot-svg" viewBox="0 0 100 100">
+                        <defs>
+                            <radialGradient id="mascotGradWelcome" cx="35%" cy="28%" r="75%">
+                                <stop offset="0%" stop-color="#C9A6FF"></stop>
+                                <stop offset="100%" stop-color="#8B3DFF"></stop>
+                            </radialGradient>
+                        </defs>
+                        <ellipse class="mascot-ring mascot-ring-1" cx="50" cy="50" rx="47" ry="17"></ellipse>
+                        <ellipse class="mascot-ring mascot-ring-2" cx="50" cy="50" rx="47" ry="17"></ellipse>
+                        <circle class="mascot-body" cx="50" cy="50" r="27" fill="url(#mascotGradWelcome)"></circle>
+                        <use href="#ic-bolt" class="mascot-body-shape mascot-body-shape-rayo" x="18" y="14" width="64" height="72" fill="url(#mascotGradWelcome)"></use>
+                        <use href="#ic-fist" class="mascot-body-shape mascot-body-shape-titan" x="16" y="16" width="68" height="68" fill="url(#mascotGradWelcome)"></use>
+                        <use href="#ic-shield" class="mascot-body-shape mascot-body-shape-noir" x="18" y="18" width="64" height="64" fill="url(#mascotGradWelcome)"></use>
+                        <use href="#ic-star" class="mascot-body-shape mascot-body-shape-estrella" x="15" y="15" width="70" height="70" fill="url(#mascotGradWelcome)"></use>
+                        <ellipse class="mascot-cheek" cx="35" cy="58" rx="5" ry="3"></ellipse>
+                        <ellipse class="mascot-cheek" cx="65" cy="58" rx="5" ry="3"></ellipse>
+                        <g class="mascot-emblem" transform="translate(50, 70)">
+                            <use href="#ic-star" class="mascot-emblem-icon mascot-emblem-classic" x="-7" y="-7" width="14" height="14"></use>
+                            <use href="#ic-bolt" class="mascot-emblem-icon mascot-emblem-rayo" x="-6" y="-8" width="12" height="16"></use>
+                            <use href="#ic-fist" class="mascot-emblem-icon mascot-emblem-titan" x="-7" y="-7" width="14" height="14"></use>
+                            <use href="#ic-mask" class="mascot-emblem-icon mascot-emblem-noir" x="-7" y="-7" width="14" height="14"></use>
+                            <use href="#ic-star" class="mascot-emblem-icon mascot-emblem-estrella" x="-7" y="-7" width="14" height="14"></use>
+                        </g>
+                        <g class="mascot-face">
+                            <path class="mascot-brow mascot-brow-idle-left" d="M35 38 Q41 35 47 38"></path>
+                            <path class="mascot-brow mascot-brow-idle-right" d="M53 38 Q59 35 65 38"></path>
+                            <path class="mascot-brow mascot-brow-happy-left" d="M35 36 Q41 32 47 36"></path>
+                            <path class="mascot-brow mascot-brow-happy-right" d="M53 36 Q59 32 65 36"></path>
+                            <path class="mascot-brow mascot-brow-sad-left" d="M35 37 Q41 41 47 38"></path>
+                            <path class="mascot-brow mascot-brow-sad-right" d="M53 38 Q59 41 65 37"></path>
+                            <circle class="mascot-eye" cx="41" cy="47" r="5.8"></circle>
+                            <circle class="mascot-eye" cx="59" cy="47" r="5.8"></circle>
+                            <circle class="mascot-pupil" cx="42" cy="48" r="2.8"></circle>
+                            <circle class="mascot-pupil" cx="60" cy="48" r="2.8"></circle>
+                            <circle class="mascot-eye-glint" cx="43.8" cy="45.3" r="1.2"></circle>
+                            <circle class="mascot-eye-glint" cx="61.8" cy="45.3" r="1.2"></circle>
+                            <path class="mascot-mouth mascot-mouth-idle" d="M42 60 Q50 65 58 60"></path>
+                            <path class="mascot-mouth mascot-mouth-happy" d="M37 57 Q50 74 63 57 Q50 65 37 57 Z"></path>
+                            <path class="mascot-mouth mascot-mouth-sad" d="M41 65 Q50 56 59 65"></path>
+                            <path class="mascot-tear" d="M28 51 q-2.5 5 0 8.5 q2.5 -1 2.5 -4.5 q0 -2.3 -2.5 -4 Z"></path>
+                        </g>
+                        <g class="mascot-sparkles">
+                            <path class="mascot-sparkle mascot-sparkle-1" d="M14 28 l2 5.5 l5.5 2 l-5.5 2 l-2 5.5 l-2 -5.5 l-5.5 -2 l5.5 -2 Z"></path>
+                            <path class="mascot-sparkle mascot-sparkle-2" d="M86 24 l1.6 4.4 l4.4 1.6 l-4.4 1.6 l-1.6 4.4 l-1.6 -4.4 l-4.4 -1.6 l4.4 -1.6 Z"></path>
+                        </g>
+                    </svg>
+                </div>
+                <h1 id="welcome-title">FIND THE CANDIDATE!</h1>
+                <p class="hero-tagline" id="welcome-subtitle">A reference molecule and 3 candidates: only one is really its best chemical match.</p>
+                <button type="button" class="how-to-play-button" id="how-to-play-button">❓ How to play</button>
+                <div class="theme-picker">
+                    <div class="theme-picker-label" id="theme-picker-label">Choose your Super-Molecule:</div>
+                    <div class="theme-picker-options">
+                        <button type="button" class="theme-option" data-theme="classic">
+                            <span class="theme-swatch" style="background: linear-gradient(135deg, #6EE7F9 0%, #8B3DFF 55%, #FF6FB5 100%);"></span>
+                            <span class="theme-option-name" id="theme-name-classic">Classic</span>
+                        </button>
+                        <button type="button" class="theme-option" data-theme="rayo">
+                            <span class="theme-swatch" style="background: linear-gradient(135deg, #FFD84D 0%, #FF6A3D 55%, #E11D48 100%);"></span>
+                            <span class="theme-option-name" id="theme-name-rayo">Crimson Bolt</span>
+                        </button>
+                        <button type="button" class="theme-option" data-theme="titan">
+                            <span class="theme-swatch" style="background: linear-gradient(135deg, #6EE7B7 0%, #0F9D58 55%, #064E3B 100%);"></span>
+                            <span class="theme-option-name" id="theme-name-titan">Emerald Titan</span>
+                        </button>
+                        <button type="button" class="theme-option" data-theme="noir">
+                            <span class="theme-swatch" style="background: linear-gradient(135deg, #24243E 0%, #16213E 55%, #0F0C29 100%);"></span>
+                            <span class="theme-option-name" id="theme-name-noir">Night Guardian</span>
+                        </button>
+                        <button type="button" class="theme-option" data-theme="estrella">
+                            <span class="theme-swatch" style="background: linear-gradient(135deg, #93C5FD 0%, #4F8FFF 55%, #1E3A8A 100%);"></span>
+                            <span class="theme-option-name" id="theme-name-estrella">Steel Star</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="name-input">
                     <label for="player-name" id="name-label">Your name:</label>
                     <input type="text" id="player-name" maxlength="20" placeholder="Enter your name">
                 </div>
                 <button id="start-button" disabled>START!</button>
+                <div class="icon-credit">Icon parts: Lorc, Delapouite, Skoll &amp; badges set — game-icons.net (CC BY 3.0)</div>
             </div>
             <div class="welcome-ranking">
                 <div class="ranking-sidebar">
@@ -43,10 +171,54 @@
                     <div id="rankings-container"></div>
                 </div>
             </div>
+            <div class="modal-overlay" id="how-to-play-modal" aria-hidden="true">
+                <div class="modal-card">
+                    <button type="button" class="modal-close" id="how-to-play-close" aria-label="Close">✕</button>
+                    <h2 id="how-to-play-title">How to play</h2>
+                    <div class="instructions">
+                        <p id="instructions-1">Pick the candidate most similar to the reference molecule (real ECFP4/Tanimoto similarity — this is exactly how LBVS software screens compound libraries)</p>
+                        <p id="instructions-2">You have 1 minute to get as many right as possible!</p>
+                        <p id="instructions-3">Enter your name and press the button to start</p>
+                    </div>
+                    <button type="button" class="modal-got-it" id="how-to-play-got-it">Got it!</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Pantalla Principal del Juego -->
+        <!-- Game screen -->
         <div id="game-screen" class="screen">
+            <div class="bg-decor" aria-hidden="true">
+                <div class="bg-icon-set bg-icon-classic">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-atom"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-star"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-atom"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-hex"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-rayo">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-bolt"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-speed"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-bolt"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-burst"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-titan">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-fist"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-claw"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-burst"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-claw"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-noir">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-mask"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-moon"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-star"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-mask"></use></svg>
+                </div>
+                <div class="bg-icon-set bg-icon-estrella">
+                    <svg class="bg-icon bg-icon-1"><use href="#ic-shield"></use></svg>
+                    <svg class="bg-icon bg-icon-2"><use href="#ic-star"></use></svg>
+                    <svg class="bg-icon bg-icon-3"><use href="#ic-hex"></use></svg>
+                    <svg class="bg-icon bg-icon-4"><use href="#ic-star"></use></svg>
+                </div>
+            </div>
             <div class="game-container">
                 <div class="game-info">
                     <div class="player-info">
@@ -59,7 +231,7 @@
                 </div>
                 <div class="game-grid-2x2">
                     <div class="grid-cell query-cell">
-                        <h2 id="find-label">Find: <span id="target-molecule-name"></span></h2>
+                        <h2><span id="find-label">Reference:</span> <span id="target-molecule-name"></span></h2>
                         <div id="target-molecule" class="molecule-container query-molecule viewer_3Dmoljs" data-style="stick" data-backgroundcolor="0xffffff"></div>
                         <div id="feedback-message"></div>
                     </div>
@@ -89,9 +261,57 @@
                     </div>
                 </div>
             </div>
+            <div class="mascot mascot-game" id="game-mascot" aria-hidden="true">
+                <svg class="mascot-svg" viewBox="0 0 100 100">
+                    <defs>
+                        <radialGradient id="mascotGradGame" cx="35%" cy="28%" r="75%">
+                            <stop offset="0%" stop-color="#C9A6FF"></stop>
+                            <stop offset="100%" stop-color="#8B3DFF"></stop>
+                        </radialGradient>
+                    </defs>
+                    <ellipse class="mascot-ring mascot-ring-1" cx="50" cy="50" rx="47" ry="17"></ellipse>
+                    <ellipse class="mascot-ring mascot-ring-2" cx="50" cy="50" rx="47" ry="17"></ellipse>
+                    <circle class="mascot-body" cx="50" cy="50" r="27" fill="url(#mascotGradGame)"></circle>
+                    <use href="#ic-bolt" class="mascot-body-shape mascot-body-shape-rayo" x="18" y="14" width="64" height="72" fill="url(#mascotGradGame)"></use>
+                    <use href="#ic-fist" class="mascot-body-shape mascot-body-shape-titan" x="16" y="16" width="68" height="68" fill="url(#mascotGradGame)"></use>
+                    <use href="#ic-shield" class="mascot-body-shape mascot-body-shape-noir" x="18" y="18" width="64" height="64" fill="url(#mascotGradGame)"></use>
+                    <use href="#ic-star" class="mascot-body-shape mascot-body-shape-estrella" x="15" y="15" width="70" height="70" fill="url(#mascotGradGame)"></use>
+                    <ellipse class="mascot-cheek" cx="35" cy="58" rx="5" ry="3"></ellipse>
+                    <ellipse class="mascot-cheek" cx="65" cy="58" rx="5" ry="3"></ellipse>
+                    <g class="mascot-emblem" transform="translate(50, 70)">
+                        <use href="#ic-star" class="mascot-emblem-icon mascot-emblem-classic" x="-7" y="-7" width="14" height="14"></use>
+                        <use href="#ic-bolt" class="mascot-emblem-icon mascot-emblem-rayo" x="-6" y="-8" width="12" height="16"></use>
+                        <use href="#ic-fist" class="mascot-emblem-icon mascot-emblem-titan" x="-7" y="-7" width="14" height="14"></use>
+                        <use href="#ic-mask" class="mascot-emblem-icon mascot-emblem-noir" x="-7" y="-7" width="14" height="14"></use>
+                        <use href="#ic-star" class="mascot-emblem-icon mascot-emblem-estrella" x="-7" y="-7" width="14" height="14"></use>
+                    </g>
+                    <g class="mascot-face">
+                        <path class="mascot-brow mascot-brow-idle-left" d="M35 38 Q41 35 47 38"></path>
+                        <path class="mascot-brow mascot-brow-idle-right" d="M53 38 Q59 35 65 38"></path>
+                        <path class="mascot-brow mascot-brow-happy-left" d="M35 36 Q41 32 47 36"></path>
+                        <path class="mascot-brow mascot-brow-happy-right" d="M53 36 Q59 32 65 36"></path>
+                        <path class="mascot-brow mascot-brow-sad-left" d="M35 37 Q41 41 47 38"></path>
+                        <path class="mascot-brow mascot-brow-sad-right" d="M53 38 Q59 41 65 37"></path>
+                        <circle class="mascot-eye" cx="41" cy="47" r="5.8"></circle>
+                        <circle class="mascot-eye" cx="59" cy="47" r="5.8"></circle>
+                        <circle class="mascot-pupil" cx="42" cy="48" r="2.8"></circle>
+                        <circle class="mascot-pupil" cx="60" cy="48" r="2.8"></circle>
+                        <circle class="mascot-eye-glint" cx="43.8" cy="45.3" r="1.2"></circle>
+                        <circle class="mascot-eye-glint" cx="61.8" cy="45.3" r="1.2"></circle>
+                        <path class="mascot-mouth mascot-mouth-idle" d="M42 60 Q50 65 58 60"></path>
+                        <path class="mascot-mouth mascot-mouth-happy" d="M37 57 Q50 74 63 57 Q50 65 37 57 Z"></path>
+                        <path class="mascot-mouth mascot-mouth-sad" d="M41 65 Q50 56 59 65"></path>
+                        <path class="mascot-tear" d="M28 51 q-2.5 5 0 8.5 q2.5 -1 2.5 -4.5 q0 -2.3 -2.5 -4 Z"></path>
+                    </g>
+                    <g class="mascot-sparkles">
+                        <path class="mascot-sparkle mascot-sparkle-1" d="M14 28 l2 5.5 l5.5 2 l-5.5 2 l-2 5.5 l-2 -5.5 l-5.5 -2 l5.5 -2 Z"></path>
+                        <path class="mascot-sparkle mascot-sparkle-2" d="M86 24 l1.6 4.4 l4.4 1.6 l-4.4 1.6 l-1.6 4.4 l-1.6 -4.4 l-4.4 -1.6 l4.4 -1.6 Z"></path>
+                    </g>
+                </svg>
+            </div>
         </div>
 
-        <!-- Pantalla de Game Over -->
+        <!-- Game over screen -->
         <div id="game-over-screen" class="screen">
             <h1 id="game-over-title">GAME OVER!</h1>
             <div id="final-stats"></div>
@@ -99,11 +319,15 @@
         </div>
     </div>
 
-    <!-- Scripts JavaScript -->
     <script src="js/language.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/modal.js"></script>
     <script src="js/molecule-parser.js"></script>
     <script src="js/molecule-viewer.js"></script>
     <script src="js/ranking.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/confetti.js"></script>
+    <script src="js/mascot.js"></script>
     <script src="js/game.js"></script>
     <script src="js/main.js"></script>
 </body>

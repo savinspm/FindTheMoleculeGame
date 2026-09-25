@@ -33,7 +33,7 @@ class MoleculeParser {
                     );
                     
                     // Extraer solo las rutas de los archivos objetivo
-                    const targetMolecules = sortedLevels.map(level => 
+                    const targetMolecules = sortedLevels.map(level =>
                         `data/DB/${level.target.file}`
                     );
                     
@@ -89,11 +89,11 @@ class MoleculeParser {
     generateMoleculesList() {
         // Devolvemos una lista corta de archivos de ejemplo que sabemos que existen
         const molecules = [
-            "data/DB/DB00014.mol2", 
-            "data/DB/DB00035.mol2", 
-            "DB/DB00050.mol2",
+            "data/DB/DB00014.mol2",
+            "data/DB/DB00035.mol2",
+            "data/DB/DB00050.mol2",
             "data/DB/DB00091.mol2",
-            "DB/DB00093.mol2"
+            "data/DB/DB00093.mol2"
         ];
         console.log(`Usando ${molecules.length} moléculas de respaldo`);
         return molecules;

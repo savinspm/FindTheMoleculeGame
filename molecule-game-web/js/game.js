@@ -16,6 +16,7 @@ class MoleculeGame {
         this.currentMolecule = null;
         this.options = [];
         this.correctOption = -1;
+        this.correctTanimoto = null;
         this.lastLoggedTime = null; // For debug logging
         
         // Memory management
@@ -125,6 +126,9 @@ class MoleculeGame {
      * Starts the game
      */
     startGame() {
+        if (window.soundFX) window.soundFX.playStart();
+        if (window.mascot) window.mascot.reactIdle();
+
         // Save player name
         this.playerName = this.elements.playerNameInput.value.trim();
         
@@ -157,6 +161,10 @@ class MoleculeGame {
         const timeLeftElement = document.getElementById('time-left');
         if (timeLeftElement) {
             timeLeftElement.textContent = '60';
+        }
+        const timerLabelElement = document.getElementById('timer-label');
+        if (timerLabelElement) {
+            timerLabelElement.classList.remove('timer-critical');
         }
         this.startTime = Date.now();
         this.startTimer();
@@ -196,80 +204,75 @@ class MoleculeGame {
             }
             
             // Try to load current level information from JSON file
-            let similarMolecules = await this.tryLoadSimilarMolecules();
-            
-            if (similarMolecules) {
-                // If we have information from the JSON file with levels
-                this.currentMolecule = `data/DB/${similarMolecules.target.file}`;
-                
-                // Extract target molecule name
+            let levelData = await this.tryLoadSimilarMolecules();
+
+            if (levelData) {
+                // Real LBVS levels: target (reference) + 3 candidates, exactly
+                // one of which is the true nearest neighbor by Tanimoto/ECFP4.
+                this.currentMolecule = `data/DB/${levelData.target.file}`;
+
                 if (this.elements.targetMoleculeName) {
-                    this.elements.targetMoleculeName.textContent = similarMolecules.target.name;
+                    this.elements.targetMoleculeName.textContent = levelData.target.name;
                 }
-                
-                // Create options with similar molecules
-                this.options = [
-                    this.currentMolecule,
-                    `data/DB/${similarMolecules.similar[0].file}`,
-                    `data/DB/${similarMolecules.similar[1].file}`
-                ];
-                
-                // Shuffle the options
-                this.shuffleArray(this.options);
-                
-                // Find index of the correct option
-                this.correctOption = this.options.indexOf(this.currentMolecule);
-                
+
+                // Shuffle a copy of the option objects so we can still look up
+                // which one is the real match and its Tanimoto score afterwards
+                const shuffledOptions = [...levelData.options];
+                this.shuffleArray(shuffledOptions);
+
+                this.options = shuffledOptions.map(opt => `data/DB/${opt.file}`);
+                this.correctOption = shuffledOptions.findIndex(opt => opt.isMatch);
+                this.correctTanimoto = shuffledOptions[this.correctOption]
+                    ? shuffledOptions[this.correctOption].tanimoto
+                    : null;
+
                 const lang = window.language;
                 const usingLevelMsg = lang ? lang.getText('console.usingSimilarMolecules') : 'Using level with similar molecules:';
                 const targetMoleculeMsg = lang ? lang.getText('console.targetMolecule') : 'Target molecule:';
-                const incorrectOptionsMsg = lang ? lang.getText('console.incorrectOptions') : 'Incorrect options:';
-                
                 console.log(usingLevelMsg);
                 console.log(`${targetMoleculeMsg}`, this.currentMolecule);
-                console.log(`${incorrectOptionsMsg}`, this.options[0] === this.currentMolecule ? this.options.slice(1) : 
-                    this.options[1] === this.currentMolecule ? [this.options[0], this.options[2]] : this.options.slice(0, 2));
             } else {
                 // Original method as fallback if we don't have the JSON file with levels
                 // Select target molecule randomly
                 const targetIndex = Math.floor(Math.random() * this.moleculeFiles.length);
                 this.currentMolecule = this.moleculeFiles[targetIndex];
-                
+
                 // Extract molecule name from file
                 const moleculeFile = this.currentMolecule.split('/').pop().replace('.mol2', '');
                 if (this.elements.targetMoleculeName) {
                     this.elements.targetMoleculeName.textContent = moleculeFile;
                 }
-                
+
                 // Create list of available molecules excluding the target
                 let availableOptions = [...this.moleculeFiles];
                 availableOptions.splice(targetIndex, 1); // Remove target molecule
-                
+
                 // Shuffle available molecules to ensure diversity
                 this.shuffleArray(availableOptions);
-                
+
                 // Take the first 2 different molecules for incorrect options
                 const wrong1 = availableOptions[0];
                 const wrong2 = availableOptions[1];
-                
+
                 // Verify they are different from each other
                 const lang = window.language;
                 const usingRandomMsg = lang ? lang.getText('console.usingRandomSelection') : 'Using random selection of molecules:';
                 const targetMoleculeMsg = lang ? lang.getText('console.targetMolecule') : 'Target molecule:';
                 const incorrectOption1Msg = lang ? lang.getText('console.incorrectOption1') : 'Incorrect option 1:';
                 const incorrectOption2Msg = lang ? lang.getText('console.incorrectOption2') : 'Incorrect option 2:';
-                
+
                 console.log(usingRandomMsg);
                 console.log(`${targetMoleculeMsg}`, this.currentMolecule);
                 console.log(`${incorrectOption1Msg}`, wrong1);
                 console.log(`${incorrectOption2Msg}`, wrong2);
-                
+
                 // Create and shuffle options
                 this.options = [this.currentMolecule, wrong1, wrong2];
                 this.shuffleArray(this.options);
-                
+
                 // Find index of the correct option
                 this.correctOption = this.options.indexOf(this.currentMolecule);
+                this.correctTanimoto = null;
             }
             
             const lang = window.language;
@@ -457,13 +460,20 @@ class MoleculeGame {
             this.score++;
             const hitsLabel = lang ? lang.getText('scoreLabel') : 'Hits:';
             this.elements.scoreDisplay.textContent = `${hitsLabel} ${this.score}`;
-            const correctMsg = lang ? lang.getText('correct') : 'CORRECT! Well done!';
+            const correctMsg = (this.correctTanimoto != null && lang)
+                ? lang.getText('correctWithScore', { score: `${Math.round(this.correctTanimoto * 100)}%` })
+                : (lang ? lang.getText('correct') : 'CORRECT! Well done!');
             this.elements.feedbackMessage.textContent = correctMsg;
             this.elements.feedbackMessage.className = 'correct';
-            
+
             // Resaltar la opción correcta
-            document.getElementById(`option-${selectedOption}`).classList.add('correct-option');
+            const correctElement = document.getElementById(`option-${selectedOption}`);
+            correctElement.classList.add('correct-option');
             document.getElementById(`select-${selectedOption}`).disabled = true;
+
+            if (window.soundFX) window.soundFX.playCorrect();
+            if (window.spawnConfetti) window.spawnConfetti(correctElement);
+            if (window.mascot) window.mascot.reactHappy();
             
             // Deshabilitar los otros botones
             for (let i = 0; i < 3; i++) {
@@ -489,7 +499,10 @@ class MoleculeGame {
             // Briefly highlight the incorrect option
             const optionElement = document.getElementById(`option-${selectedOption}`);
             optionElement.classList.add('incorrect-option');
-            
+
+            if (window.soundFX) window.soundFX.playIncorrect();
+            if (window.mascot) window.mascot.reactSad();
+
             // Scroll to feedback message if necessary on small screens
             this.elements.feedbackMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             
@@ -545,7 +558,12 @@ class MoleculeGame {
             if (timeLeftElement) {
                 timeLeftElement.textContent = Math.ceil(remainingTime);
             }
-            
+
+            const timerLabelElement = document.getElementById('timer-label');
+            if (timerLabelElement) {
+                timerLabelElement.classList.toggle('timer-critical', remainingTime <= 10 && remainingTime > 0);
+            }
+
             // Debug log every 5 seconds
             if (Math.ceil(remainingTime) % 5 === 0 && Math.ceil(remainingTime) !== this.lastLoggedTime) {
                 console.log('Timer update:', Math.ceil(remainingTime), 'seconds remaining');
@@ -576,7 +594,8 @@ class MoleculeGame {
      */
     endGame() {
         this.gameOver = true;
-        
+        if (window.soundFX) window.soundFX.playGameOver();
+
         // Clean up resources
         this.cleanup();
         
@@ -637,7 +656,8 @@ class MoleculeGame {
         this.currentMolecule = null;
         this.options = [];
         this.correctOption = -1;
-        
+        this.correctTanimoto = null;
+
         // Ensure the game over screen is completely hidden
         this.elements.gameOverScreen.style.display = 'none';
         this.elements.gameOverScreen.style.visibility = 'hidden';

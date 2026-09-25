@@ -1,86 +1,67 @@
 # FindTheMoleculeGame Dataset Preparation
 
-## About the prepare_molecules.py Script
+## `prepare_lbvs_dataset.py` (current pipeline)
 
-This script helps prepare the dataset for the FindTheMoleculeGame by selecting molecules and finding similar ones to create a challenging game experience.
+This is the script that generates the data the game reads at runtime. It computes **real cheminformatics**, not heuristics: ECFP4 (Morgan, radius 2, 2048-bit) fingerprints and pairwise Tanimoto similarity over the molecule pool in `molecule-game-web/data/DB/*.mol2`, via [RDKit](https://www.rdkit.org/).
 
-### What the Script Does
+It is **build-time only** — the game itself never runs RDKit or Python; it just reads the JSON files this script writes.
 
-1. **Selects Target Molecules**: It selects 120 molecules from the preliminaryDB folder, ranging from the smallest to the largest in atom count.
+### Setup
 
-2. **Finds Similar Molecules**: For each target molecule, it finds two similar molecules based on atom count to use as incorrect options in the game.
-
-3. **Creates Progressive Difficulty**: It arranges molecules in ascending order of complexity, so the game starts with simpler molecules and gradually introduces more complex ones.
-
-4. **Generates JSON Dataset**: It creates a molecules.json file with information about each level, including the target molecule and its similar alternatives.
-
-5. **Copies Required Files**: It copies only the selected .mol2 files to the data/DB folder.
-
-### Usage Instructions
-
-1. **Setup Your Source Directory**: 
-   - Place all your .mol2 molecule files in a folder called `preliminaryDB` in the project root.
-
-2. **Run the Script**: 
-   ```bash
-   python prepare_molecules.py
-   ```
-
-3. **Check the Output**:
-   - The script will create/update `molecule-game-web/data/molecules.json`
-   - Selected .mol2 files will be copied to `molecule-game-web/data/DB/`
-
-### Output Format
-
-The molecules.json file will have the following structure:
-
-```json
-{
-  "levels": [
-    {
-      "target": {
-        "name": "DB00001",
-        "file": "DB00001.mol2",
-        "atom_count": 15
-      },
-      "similar": [
-        {
-          "name": "DB00002",
-          "file": "DB00002.mol2",
-          "atom_count": 14
-        },
-        {
-          "name": "DB00003",
-          "file": "DB00003.mol2",
-          "atom_count": 16
-        }
-      ]
-    },
-    // More levels...
-  ],
-  "total": 120
-}
+```bash
+python3 -m venv .venv
+.venv/bin/pip install rdkit numpy
 ```
 
-### Requirements
+### Run
 
-- Python 3.6 or higher
-- A collection of .mol2 files in the preliminaryDB folder
+```bash
+.venv/bin/python3 prepare_lbvs_dataset.py
+```
 
-### Customization
+### What it does
 
-You can modify these variables at the beginning of the script:
+1. Parses every `molecule-game-web/data/DB/*.mol2` file with RDKit. Files RDKit can't parse, or molecules with fewer than 6 heavy atoms (single ions, tiny fragments — their fingerprints are too sparse to mean anything), are excluded from the pool.
+2. Computes ECFP4 fingerprints and the full pairwise Tanimoto similarity matrix over the remaining pool (~340 molecules).
+3. For every molecule, precomputes its `neighbors` (closest others by Tanimoto) and `decoys` (low-similarity, size-matched candidates, so "pick the biggest one" is never a shortcut).
+4. Builds game levels: for each target molecule, 1 real nearest neighbor + 2 decoys, shuffled, with the correct one flagged `isMatch: true` and its real Tanimoto score attached (shown to the player after a correct guess).
 
-- `PRELIMINARY_DB_PATH`: Path to your source directory with all .mol2 files
-- `TARGET_DB_PATH`: Where to copy the selected .mol2 files
-- `JSON_OUTPUT_PATH`: Where to save the JSON dataset
-- `NUM_MOLECULES`: Number of target molecules to select
-- `SIMILARITY_THRESHOLD`: Maximum difference in atom count (as percentage) for similar molecules
+### Output files (under `molecule-game-web/data/`)
 
-## Game Integration
+| File | Contents |
+|---|---|
+| `lbvs_dataset.json` | Per-molecule metadata + `neighbors`/`decoys` lists with Tanimoto scores (source data) |
+| `molecules.json` | What the game actually reads: levels as `{ target, options: [3 candidates, one flagged isMatch] }` |
 
-The script is designed to work with the FindTheMoleculeGame web application. Once you've generated the dataset:
+### Key tunables (top of the script)
 
-1. The game will automatically use the levels defined in molecules.json
-2. It will present the target molecule and two similar options
-3. The difficulty will increase progressively as the player scores more points
+- `MIN_HEAVY_ATOMS` — pool filter (default 6).
+- `NEIGHBORS_TOP_K` / `DECOY_POOL_SIZE` / `DECOY_MAX_TANIMOTO` / `DECOY_SIZE_TOLERANCE` — how neighbors/decoys are picked.
+- `CANDIDATE_LEVELS` — how many levels to generate.
+
+---
+
+## `prepare_molecules.py` (legacy, superseded)
+
+The original dataset script, kept for reference. It selected molecules and paired them by **atom-count proximity only** (no real chemistry), which is what `prepare_lbvs_dataset.py` replaced. It's no longer used to generate `molecules.json`.
+
+<details>
+<summary>Original docs</summary>
+
+### What the Script Did
+
+1. **Selected Target Molecules**: selected molecules from a `preliminaryDB` folder, ranging from the smallest to the largest in atom count.
+2. **Found Similar Molecules**: for each target, found two similar molecules based on atom count to use as incorrect options.
+3. **Created Progressive Difficulty**: arranged molecules in ascending order of complexity.
+4. **Generated JSON Dataset**: wrote `molecule-game-web/data/molecules.json` with the old `{ target, similar: [2] }` schema.
+5. **Copied Required Files**: copied only the selected `.mol2` files to `data/DB`.
+
+### Usage
+
+```bash
+python prepare_molecules.py
+```
+
+Place source `.mol2` files in `preliminaryDB/` at the repo root first.
+
+</details>
